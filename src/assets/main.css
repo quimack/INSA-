@@ -1,0 +1,14 @@
+ /* @import './base.css'; */
+
+
+@font-face {
+  font-family: 'Outfit';
+  src: url('@/assets/fonts/Outfit.otf') format('opentype');
+}
+
+body{
+  margin: 0;
+}
+html, body {
+  overflow-x: hidden;
+}
