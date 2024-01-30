@@ -435,9 +435,6 @@ a {
     max-width: 1200px;
   }
   .header-bottom {
-    position: absolute;
-    left: 0;
-
     width: 100%;
   }
   .header-bottom {
