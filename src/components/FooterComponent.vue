@@ -47,10 +47,12 @@ a {
   text-decoration: none;
   color: #fff;
 
-  &:hover {
+
+}
+
+a:hover {
     color: #4297c7;
   }
-}
 .icon {
   width: 2%;
   margin-right: .9em;
