@@ -59,8 +59,8 @@ import { RouterLink } from 'vue-router';
   cursor: pointer;
   color: #084690;
 
-  &:hover {
+}
+.navbar-item:hover {
     color: #097fff;
   }
-}
 </style>
