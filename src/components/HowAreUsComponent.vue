@@ -62,8 +62,8 @@ main {
 }
 .router{
   cursor: pointer;
-  &:hover{
+}
+  .router:hover{
     color: #097fff;
   }
-}
 </style>
