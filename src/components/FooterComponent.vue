@@ -129,7 +129,6 @@ a:hover {
 .footer {
   background: var(--raisin-black-1);
   color: var(--white);
-  margin-bottom: 68px;
 }
 
 .footer .container {
@@ -260,7 +259,11 @@ a:hover {
   .footer-link-box {
     flex-basis: 550px;
   }
+  .header-bottom-right{
+    margin-left: 42rem;
+  }
 }
+
 
 @media (min-width: 1200px) {
   .footer {
@@ -269,6 +272,9 @@ a:hover {
 
   .footer-link-box {
     flex-basis: 700px;
+  }
+  .header-bottom-right{
+    margin-left: 42rem;
   }
 }
 </style>

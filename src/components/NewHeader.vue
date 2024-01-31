@@ -42,7 +42,7 @@
           <!--           <RouterLink to="/" class="logo"><h1>INSA</h1></RouterLink>
           <div class="txt">Distribuidor</div> -->
         </div>
-        <div class="header-bottom-right">
+        <div  v-if="!isStorePage" class="header-bottom-right">
           <button class="header-top-btn" @click="routeStore()">Ir a la tienda</button>
         </div>
         <nav class="navbar" data-navbar>
@@ -102,49 +102,94 @@
           </button>
         </div>
       </div>
+
     </div>
+
   </header>
+
 </template>
 
+
+
 <script>
+
 export default {
+
   name: 'NewHeader',
+
   computed: {
+
     isStorePage() {
+
       // Verifica si la ruta actual es '/tienda'
+
       return this.$route.path === '/tienda'
+
     }
+
   },
+
   methods: {
+
     routeStore() {
+
       this.$router.push('/tienda')
+
     },
+
     routeHome() {
+
       // Redirigir a la página de inicio
+
       this.$router.push('/')
+
     }
+    
+
   }
+
 }
+
 </script>
 
+
+
 <style scope>
+
 .header {
+
   position: relative;
+
   z-index: 2;
+
 }
+
+
 
 .header-top {
+
   background: var(--prussian-blue);
+
   padding-block: 15px;
+
 }
 
+
+
 .header-top .container-header,
+
 .header-top-list {
+
   display: flex;
+
   flex-wrap: wrap;
+
   justify-content: space-between;
+
   align-items: center;
+
 }
+
 
 .header-top .container-header {
   gap: 8px 20px;
@@ -410,6 +455,9 @@ a {
   .header-top .wrapper {
     gap: 30px;
   }
+  .header-bottom-right {
+    margin-left: 42rem;
+  }
 }
 
 @media (min-width: 1200px) {
@@ -435,6 +483,9 @@ a {
   .navbar-top,
   .overlay {
     display: none;
+  }
+  .header-bottom-right {
+    margin-left: 42rem;
   }
 }
 </style>
