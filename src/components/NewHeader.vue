@@ -27,20 +27,23 @@
               </a>
             </li>
           </ul>
-
-          <button class="header-top-btn" @click="routeStore()">Ir a la tienda</button>
         </div>
       </div>
     </div>
 
     <div class="header-bottom">
       <div class="container-header">
-        <div>
+        <div class="header-bottom-left">
           <a href="#" class="logo">
             <img src="../assets/images/INSA.png" to="/" alt="Homeverse logo" />
           </a>
-<!--           <RouterLink to="/" class="logo"><h1>INSA</h1></RouterLink>
+
+          
+          <!--           <RouterLink to="/" class="logo"><h1>INSA</h1></RouterLink>
           <div class="txt">Distribuidor</div> -->
+        </div>
+        <div class="header-bottom-right">
+          <button class="header-top-btn" @click="routeStore()">Ir a la tienda</button>
         </div>
         <nav class="navbar" data-navbar>
           <div class="navbar-top">
@@ -52,9 +55,9 @@
           </div>
 
           <div class="navbar-bottom">
-            <ul class="navbar-list">
+            <!-- <ul class="navbar-list">
               <li>
-                <a href="#home" to="/" class="navbar-link" data-nav-link>INICIO</a>
+                <a href="#home"  class="navbar-link" data-nav-link>INICIO</a>
               </li>
 
               <li>
@@ -66,33 +69,36 @@
               <li>
                 <a href="#service" class="navbar-link" data-nav-link>Contacto</a>
               </li>
-            </ul>
+            </ul> -->
           </div>
         </nav>
 
         <div class="header-bottom-actions">
-          <button class="header-bottom-actions-btn" aria-label="Search">
-            <ion-icon name="search-outline"></ion-icon>
+          <button
+            v-if="isStorePage"
+            @click="routeHome"
+            class="header-bottom-actions-btn"
+            aria-label="Home"
+          >
+            <ion-icon name="home-outline"></ion-icon>
 
-            <span>Search</span>
+            <span>Home</span>
           </button>
 
-          <button class="header-bottom-actions-btn" aria-label="Profile">
+          <button v-if="isStorePage" class="header-bottom-actions-btn" aria-label="Profile">
             <ion-icon name="person-outline"></ion-icon>
 
-            <span>Profile</span>
+            <span>Perfil</span>
           </button>
 
-          <button class="header-bottom-actions-btn" aria-label="Cart">
+          <button v-if="isStorePage" class="header-bottom-actions-btn" aria-label="Cart">
             <ion-icon name="cart-outline"></ion-icon>
 
-            <span>Cart</span>
+            <span>Tienda</span>
           </button>
 
           <button class="header-bottom-actions-btn" data-nav-open-btn aria-label="Open Menu">
             <ion-icon name="menu-outline"></ion-icon>
-
-            <span>Menu</span>
           </button>
         </div>
       </div>
@@ -101,64 +107,21 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue'
-
 export default {
   name: 'NewHeader',
-  setup() {
-    const navbar = ref(null)
-    const overlay = ref(null)
-    const navCloseBtn = ref(null)
-    const navOpenBtn = ref(null)
-    const navbarLinks = ref(null)
-    const header = ref(null)
-    const isNavbarActive = ref(false)
-    const isOverlayActive = ref(false)
-
-    const elemToggleFunc = (elem) => elem.classList.toggle('active')
-
-    const handleNavClick = () => {
-      isNavbarActive.value = !isNavbarActive.value
-      isOverlayActive.value = !isOverlayActive.value
-    }
-
-    const handleScroll = () => {
-      header.value.classList.toggle('active', window.scrollY >= 400)
-    }
-
-    const addClickListeners = (elements) => {
-      elements.forEach((elem) => {
-        elem.addEventListener('click', handleNavClick)
-      })
-    }
-
-    onMounted(() => {
-      navbar.value = document.querySelector('[data-navbar]')
-      overlay.value = document.querySelector('[data-overlay]')
-      navCloseBtn.value = document.querySelector('[data-nav-close-btn]')
-      navOpenBtn.value = document.querySelector('[data-nav-open-btn]')
-      navbarLinks.value = document.querySelectorAll('[data-nav-link]')
-      header.value = document.querySelector('[data-header]')
-
-      if (navbarLinks.value && navbarLinks.value.length) {
-        addClickListeners(Array.from(navbarLinks.value))
-      }
-
-      window.addEventListener('scroll', handleScroll)
-    })
-
-    watch([isNavbarActive, isOverlayActive], () => {
-      elemToggleFunc(navbar.value)
-      elemToggleFunc(overlay.value)
-    })
-
-    return {
-      // Expose necessary variables or functions to the template
+  computed: {
+    isStorePage() {
+      // Verifica si la ruta actual es '/tienda'
+      return this.$route.path === '/tienda'
     }
   },
   methods: {
     routeStore() {
       this.$router.push('/tienda')
+    },
+    routeHome() {
+      // Redirigir a la página de inicio
+      this.$router.push('/')
     }
   }
 }
@@ -179,7 +142,7 @@ export default {
 .header-top-list {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -360,6 +323,16 @@ a {
   font-weight: var(--fw-500);
 }
 
+.header-bottom-left {
+  display: flex;
+  align-items: center;
+}
+
+.header-bottom-right {
+  display: flex;
+  align-items: center;
+}
+
 @media (min-width: 600px) {
   .container-header {
     max-width: 550px;
@@ -377,7 +350,7 @@ a {
     padding: 12px 28px;
   }
   .header-top {
-    padding-block: 5px;
+    padding-block: 15px;
   }
 
   .header-top .wrapper {
