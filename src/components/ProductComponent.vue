@@ -5,11 +5,11 @@
     </header>
     <main>
       <h3>{{ name }}</h3>
-      <p>{{ description }}</p>
+      <p class="detail">{{ description }}</p>
     </main>
     <footer class="price">
       <div>$ {{ price }}</div>
-      <div class="detail" v-if="uxpack">Unidades x pack: {{ uxpack }}</div>
+      <div class="detail" v-if="uxpack">unidades x pack: {{ uxpack }}</div>
     </footer>
   </div>
 </template>
@@ -27,7 +27,14 @@ export default {
   height: 22em;
   border-radius: 16px;
   margin: 1.3em 1.3em 3em 1.3em;
+  box-shadow: var(--shadow-1);
 }
+
+main, footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+} 
 .img-container{
   height: 12em;
   display: flex;
@@ -44,16 +51,18 @@ export default {
   width: 6em;
 }
 h3{
-  margin: .7em .3em;
+  padding: .3em;
   color: #023e8a;
 }
 .price{
   color: #097fff;
   font-size: 1.3em;
+  padding: .3em;
 }
 .detail{
   color: #656565;
-  font-size: .7em;
+  font-size: 14px;
+  text-align: center;
   font-weight: 400;
 }
 </style>

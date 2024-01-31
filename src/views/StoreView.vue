@@ -1,19 +1,25 @@
 <template>
   <div class="wrapper">
     <aside class="aside-container">
-      <div
-        v-for="(item, index) in categories"
-        v-bind:key="index"
-        class="item-container"
-        @click="showSubcategorie(index)"
-      >
-        <div class="item">{{ item.name }}</div>
+      <div v-for="(brand, index) in brands" v-bind:key="index" class="item-container">
         <div
-          v-if="item.subcategories.length >= 1 && item.show_subcategories"
-          class="subitem-container"
+          class="item"
+          @click="brand.categories.length >= 1 ? showCategorie(index) : filterByBrand(brand.name)"
         >
-          <div v-for="(subitem, i) in item.subcategories" v-bind:key="i" class="subitem">
-            {{ subitem.name }}
+          {{ brand.name }}
+        </div>
+        <div v-if="brand.categories.length >= 1 && brand.show_categories" class="subitem-container">
+          <div
+            v-for="(categorie, i) in brand.categories"
+            v-bind:key="i"
+            class="subitem"
+            @click="
+              categorie.subcategories?.length >= 1
+                ? showSubCategories(index, i)
+                : filterByCategorie(brand, categorie)
+            "
+          >
+            {{ categorie.name }}
           </div>
         </div>
       </div>
@@ -21,6 +27,7 @@
 
     <main class="main-container">
       <input
+        @input="filterBySearch(search)"
         class="search"
         type="text"
         v-model="search"
@@ -29,7 +36,7 @@
       />
       <div class="products-container">
         <ProductComponent
-          v-for="(item, index) in products"
+          v-for="(item, index) in filteredProducts"
           v-bind:key="index"
           :img="item.img"
           :name="item.nombre"
@@ -54,13 +61,26 @@ import { ref } from 'vue'
 const fileId = '11gGY9ArgQbWmoPX48QAn6x89NMDAa9HRTBvvFSzniuc'
 const search = ref('')
 
-let products = ref([
+let productsList = ref([
   {
     codigo: 109587457,
     marca: 'Doble A',
     categoria: 'Cintas',
     subcategoria: 'Cinta de enmascarar 903',
     nombre: 'Cinta de papel',
+    descripcion: 'Cinta de pintor, para todo tipo de superficies',
+    medidas: '12x40',
+    precio: 3400,
+    unidades_x_pack: 72,
+    img: 'https://http2.mlstatic.com/D_NQ_NP_818816-MLA51985342337_102022-O.webp'
+  },
+  {
+    codigo: 109583457,
+    marca: 'Loctite',
+    categoria: 'Cintas',
+    subcategoria: 'Cinta de enmascarar 903',
+    nombre: 'Cinta de papel',
+    descripcion: 'Cinta de pintor, para todo tipo de superficies',
     medidas: '12x40',
     precio: 3400,
     unidades_x_pack: 72,
@@ -133,46 +153,104 @@ let products = ref([
   }
 ])
 
-let categories = ref([
+let products = ref(JSON.parse(JSON.stringify(productsList.value)))
+let filteredProducts = ref(JSON.parse(JSON.stringify(products.value)))
+
+let brands = ref([
   {
     name: 'Doble A',
-    subcategories: [{ name: 'Cintas' }, { name: 'Discos' }],
-    show_subcategories: false
+    categories: [
+      {
+        name: 'Cintas',
+        show_subcategories: false
+      },
+      {
+        name: 'Discos',
+        show_subcategories: false,
+        subcategories: [{ name: 'Discos papel' }, { name: 'Discos de corte' }]
+      }
+    ],
+    show_categories: false
   },
   {
     name: 'El galgo',
-    subcategories: [
-      { name: 'Lijas y telas' },
-      { name: 'Pinceles y brochas' },
-      { name: 'Rodillos y filtros' }
+    categories: [
+      { name: 'Lijas y telas', show_subcategories: false },
+      { name: 'Pinceles y brochas', show_subcategories: false },
+      { name: 'Rodillos y filtros', show_subcategories: false }
     ],
-    show_subcategories: false
+    show_categories: false
   },
   {
     name: 'Loctite',
-    subcategories: [],
-    show_subcategories: false
+    categories: [],
+    show_categories: false
   },
   {
     name: 'Congo',
-    subcategories: [{ name: 'Cola y cemento' }],
-    show_subcategories: false
+    categories: [{ name: 'Cola y cemento', show_subcategories: false }],
+    show_categories: false
   }
 ])
 
-function showSubcategorie(index) {
-  categories.value.forEach((item, i) => {
+function showCategorie(index) {
+  brands.value.forEach((item, i) => {
     if (index === i) {
-      console.log('entra')
-      item.show_subcategories = !item.show_subcategories
-      console.log(item)
+      item.show_categories = !item.show_categories
     } else {
-      item.show_subcategories = false
+      item.show_categories = false
+    }
+  })
+}
+
+function showSubCategories(index, i) {
+
+  brands.value.forEach((brand, brandIndex) => {
+    if (index === brandIndex) {
+      brand.categories.forEach((categorie, categorieIndex) => {
+        if (categorieIndex === i) {
+          categorie.show_subcategories = !categorie.show_subcategories
+        } else {
+          categorie.show_subcategories = false
+        }
+      })
+    }
+  })
+}
+
+function filterByBrand(brand) {
+  products.value = productsList.value.filter((i) => i.marca === brand)
+  filteredProducts.value = productsList.value.filter((i) => i.marca === brand)
+}
+
+function filterByCategorie(brand, categorie) {
+  products.value = productsList.value.filter(
+    (i) => {
+      if(i.marca === brand.name && i.categoria === categorie.name) return i
+    }
+  )
+  filteredProducts.value = productsList.value.filter(
+    (i) => {
+      if(i.marca === brand.name && i.categoria === categorie.name) return i
+    }
+  )
+}
+
+function filterBySearch(value) {
+  filteredProducts.value = products.value.filter((i) => {
+    if (
+      i.nombre?.toLowerCase().includes(value.toLowerCase()) ||
+      i.marca?.toLowerCase().includes(value.toLowerCase()) ||
+      i.descripcion?.toLowerCase().includes(value.toLowerCase()) ||
+      i.categoria?.toLowerCase().includes(value.toLowerCase()) ||
+      i.subcategoria?.toLowerCase().includes(value.toLowerCase())
+    ) {
+      return i
     }
   })
 
-  console.log('listo')
 }
+
 //   startGoogleDriveLogin() {
 //     // URL de autorización de Google Drive
 //     const authorizationEndpoint = "https://accounts.google.com/o/oauth2/auth";
@@ -250,6 +328,7 @@ function showSubcategorie(index) {
   padding-left: 3vw;
   /* background-color: #DCE8EF; */
   /* padding: 8em 1em 3em 1em; */
+  /* font-family: var(--ff-poppins); */
   margin-top: 3em;
 }
 
@@ -261,12 +340,14 @@ function showSubcategorie(index) {
 }
 .item {
   color: #023e8a;
-  font-size: 1.3em;
+  font-size: 1.2em;
   font-weight: bold;
   cursor: default;
 }
-.item:hover {
-  color: #097fff;
+.item:hover,
+.subitem:hover {
+  /* color: #097fff; */
+  color: #ff5a3d;
 }
 
 .subitem-container {
@@ -276,13 +357,13 @@ function showSubcategorie(index) {
   padding: 0.2em 0;
   cursor: pointer;
 }
-.subitem:hover {
-  color: #097fff;
-}
 
 .main-container {
   width: 75%;
   padding: 3em 4vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .search {
@@ -291,12 +372,10 @@ function showSubcategorie(index) {
   font-size: 16px;
   letter-spacing: 0;
   font-weight: 400;
-  /* border-radius: 8px; */
   color: #454545;
   border: 1px solid #cbcbcb;
-  /* padding: .2em .4em; */
   padding: 25px 18px;
-  font-family: 'Outfit', sans-serif;
+  box-shadow: var(--shadow-1);
 }
 .search:focus-visible {
   outline: none;
