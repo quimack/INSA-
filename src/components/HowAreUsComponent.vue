@@ -1,54 +1,29 @@
 <template>
   <section class="hero" id="home">
     <div class="container">
+      <!-- Contenido del héroe -->
       <div class="hero-content">
         <p class="hero-subtitle">
           <ion-icon name="hammer-outline"></ion-icon>
-
-          <span>Somos una empresa dedicada a la distribución mayorista de</span>
+          <span>Impulsando tu proyecto hacia el éxito</span>
         </p>
-
-        <h2 class="h1 hero-title">Insumos De Ferretería</h2>
-
+        <h2 class="h1 hero-title">Soluciones Completas en Ferretería</h2>
         <p class="hero-text">
           desde hace más de 30 años. Tenemos una amplia trayectoria en el sector y una variada gama
-          de productos.¡Combinamos la calidad con los mejores precios!Somos
-          <strong>representantes oficiales</strong> de grandes marcas tales como
-          <span class="light-color"> Doble A, Tiroli, Norton, Teckbond y El Galgo </span>. Brindamos
+          de productos. ¡Combinamos la calidad con los mejores precios! Somos
+          <strong>representantes oficiales</strong> de grandes marcas tales como:
+          <span class="light-color"> Doble A, Tiroli, Norton, Teckbond y El Galgo.</span> Brindamos
           soluciones a nuestros clientes más allá de la venta de productos.
         </p>
-
-        <button class="btn">Conoce Nuestra Tienda On-line</button>
+        <button class="btn" @click="routeStore()">Conoce Nuestra Tienda On-line</button>
       </div>
 
+      <!-- Imagen del héroe -->
       <figure class="hero-banner">
         <img src="../assets/images/imagen1.jpg" alt="Modern house model" class="w-100" />
       </figure>
     </div>
   </section>
-
-  <!--   <main id="us">
-    <div class="container">
-      <div class="p">
-        Somos una empresa dedicada a la distribución mayorista de
-        <strong>insumos de ferretería</strong> desde hace más de 30 años.
-        Tenemos una amplia trayectoria en el sector y una variada gama de
-        productos.
-        <div class="dark-color">
-          ¡Combinamos la calidad con los mejores precios!
-        </div>
-      </div>
-      <div class="p">
-        Somos <strong>representantes oficiales</strong> de grandes marcas tales
-        como
-        <span class="light-color">
-          Doble A, Tiroli, Norton, Teckbond y El Galgo </span
-        >. Brindamos soluciones a nuestros clientes más allá de la venta de
-        productos.
-        <div class="dark-color">¡Conocé más en nuestra <span class="router" @click="routeStore()"> tienda on-line</span>!</div>
-      </div>
-    </div>
-  </main> -->
 </template>
 
 <script>
@@ -168,37 +143,6 @@ export default {
 .light-color {
   color: #097fff;
 }
-/* main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 1.8em 16vw;
-  font-size: 1.3em;
-
-}
-.container{
-    background-color: #fff;
-    border-radius: 16px;
-    width: 65vw;
-    padding: 2em;
-}
-.p {
-  padding: 0.8em 0;
-}
-
-.dark-color {
-  color: #023e8a;
-  font-size: 1.1em;
-}
-.router a {
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.router:hover {
-  color: #097fff;
-} */
 
 @media (min-width: 600px) {
   .container {
