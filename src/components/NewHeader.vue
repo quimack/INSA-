@@ -28,7 +28,7 @@
             </li>
           </ul>
 
-          <button class="header-top-btn">Ir a la tienda</button>
+          <button class="header-top-btn" @click="routeStore()">Ir a la tienda</button>
         </div>
       </div>
     </div>
@@ -36,8 +36,11 @@
     <div class="header-bottom">
       <div class="container-header">
         <div>
-          <RouterLink to="/" class="logo">INSA</RouterLink>
-          <div class="txt">Distribuidor mayorista de insumos de ferretería</div>
+          <a href="#" class="logo">
+            <img src="../assets/images/INSA.png" to="/" alt="Homeverse logo" />
+          </a>
+<!--           <RouterLink to="/" class="logo"><h1>INSA</h1></RouterLink>
+          <div class="txt">Distribuidor</div> -->
         </div>
         <nav class="navbar" data-navbar>
           <div class="navbar-top">
@@ -51,17 +54,18 @@
           <div class="navbar-bottom">
             <ul class="navbar-list">
               <li>
-                <a href="#home" class="navbar-link" data-nav-link>INICIO</a>
+                <a href="#home" to="/" class="navbar-link" data-nav-link>INICIO</a>
               </li>
 
               <li>
-                <a href="#about" class="navbar-link" data-nav-link>Tienda ON-LINE</a>
+                <a href="#about" class="navbar-link" @click="routeStore()" data-nav-link
+                  >Tienda ON-LINE</a
+                >
               </li>
 
               <li>
                 <a href="#service" class="navbar-link" data-nav-link>Contacto</a>
               </li>
-
             </ul>
           </div>
         </nav>
@@ -150,6 +154,11 @@ export default {
 
     return {
       // Expose necessary variables or functions to the template
+    }
+  },
+  methods: {
+    routeStore() {
+      this.$router.push('/tienda')
     }
   }
 }
@@ -452,8 +461,10 @@ a {
     align-items: center;
     gap: 30px;
   }
-  .header-bottom-actions-btn:last-child, .navbar-top, .overlay {
+  .header-bottom-actions-btn:last-child,
+  .navbar-top,
+  .overlay {
     display: none;
-}
+  }
 }
 </style>

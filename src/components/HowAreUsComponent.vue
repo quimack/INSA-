@@ -9,7 +9,7 @@
         </p>
         <h2 class="h1 hero-title">Soluciones Completas en Ferretería</h2>
         <p class="hero-text">
-          desde hace más de 30 años. Tenemos una amplia trayectoria en el sector y una variada gama
+          Desde hace más de 30 años. Tenemos una amplia trayectoria en el sector y una variada gama
           de productos. ¡Combinamos la calidad con los mejores precios! Somos
           <strong>representantes oficiales</strong> de grandes marcas tales como:
           <span class="light-color"> Doble A, Tiroli, Norton, Teckbond y El Galgo.</span> Brindamos
@@ -142,6 +142,10 @@ export default {
 }
 .light-color {
   color: #097fff;
+}
+
+.w-100{
+  width: 100%;
 }
 
 @media (min-width: 600px) {
