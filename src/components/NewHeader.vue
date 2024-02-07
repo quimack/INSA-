@@ -38,12 +38,13 @@
             <img src="../assets/images/INSA.png" to="/" alt="Homeverse logo" />
           </a>
 
-          
           <!--           <RouterLink to="/" class="logo"><h1>INSA</h1></RouterLink>
           <div class="txt">Distribuidor</div> -->
         </div>
-        <div  v-if="!isStorePage" class="header-bottom-right">
-          <button class="header-top-btn" @click="routeStore()">Ir a la tienda</button>
+        <div v-if="!isStorePage" class="header-bottom-right">
+          <button v-if="!isStorePage" class="header-top-btn" @click="routeStoreAndShowLogin">
+            Ir a la tienda
+          </button>
         </div>
         <nav class="navbar" data-navbar>
           <div class="navbar-top">
@@ -85,7 +86,12 @@
             <span>Home</span>
           </button>
 
-          <button v-if="isStorePage" class="header-bottom-actions-btn" aria-label="Profile">
+          <button
+            v-if="isStorePage"
+            @click="showLogin = !showLogin"
+            class="header-bottom-actions-btn"
+            aria-label="Profile"
+          >
             <ion-icon name="person-outline"></ion-icon>
 
             <span>Perfil</span>
@@ -102,84 +108,69 @@
           </button>
         </div>
       </div>
-
     </div>
-
   </header>
-
+  <Login :showLogin="showLogin" />
+  <!-- Aquí se muestra el componente Login -->
 </template>
 
-
-
 <script>
+import Login from '@/components/Login.vue'
 
 export default {
-
-  name: 'NewHeader',
-
-  computed: {
-
-    isStorePage() {
-
-      // Verifica si la ruta actual es '/tienda'
-
-      return this.$route.path === '/tienda'
-
-    }
-
+  components: {
+    Login
   },
-
-  methods: {
-
-    routeStore() {
-
-      this.$router.push('/tienda')
-
-    },
-
-    routeHome() {
-
-      // Redirigir a la página de inicio
-
-      this.$router.push('/')
-
+  name: 'NewHeader',
+  data() {
+    return {
+      showLogin: false
     }
-    
-
+  },
+  computed: {
+    isStorePage() {
+      // Verifica si la ruta actual es '/tienda'
+      return this.$route.path === '/tienda'
+    }
+  },
+  methods: {
+    routeStore() {
+      this.$router.push('/tienda')
+    },
+    routeStoreAndShowLogin() {
+      if (this.isStorePage) {
+        // Solo muestra el login si estás en la página de tienda
+        this.showLogin = true
+      } else {
+        // Si no estás en la página de tienda, redirige a la tienda sin mostrar el login
+        this.routeStore()
+        this.showLogin = false
+      }
+    },
+    routeHome() {
+      // Redirigir a la página de inicio
+      this.$router.push('/')
+      this.showLogin = false
+    }
   }
-
 }
-
 </script>
 
-
-
 <style scope>
-
 .header {
-
   position: relative;
 
   z-index: 2;
-
 }
 
-
-
 .header-top {
-
   background: var(--prussian-blue);
 
   padding-block: 15px;
-
 }
 
-
-
 .header-top .container-header,
-
 .header-top-list {
-
   display: flex;
 
   flex-wrap: wrap;
@@ -187,9 +178,7 @@ export default {
   justify-content: space-between;
 
   align-items: center;
-
 }
-
 
 .header-top .container-header {
   gap: 8px 20px;

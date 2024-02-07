@@ -1,7 +1,12 @@
 <template>
-  <div class="card">
+  <div @show-login="showLogin" class="card">
     <header class="img-container">
-      <img :src="img ? img : '/img/no-img.png'" alt="imagen producto" class="img-product" :class="{ 'default-img': !img }" />
+      <img
+        :src="img ? img : '/img/no-img.png'"
+        alt="imagen producto"
+        class="img-product"
+        :class="{ 'default-img': !img }"
+      />
     </header>
     <main>
       <h3>{{ name }}</h3>
@@ -15,14 +20,30 @@
 </template>
 
 <script>
+import NewHeader from './NewHeader.vue'
+import Login from './Login.vue'
 export default {
-  props: ["img", "name", "description", "price", "categorie", "subcategorie", "uxpack"],
-};
+  components: {
+    NewHeader,
+    Login
+  },
+
+  props: ['img', 'name', 'description', 'price', 'categorie', 'subcategorie', 'uxpack'],
+  data() {
+    return {
+      showLogin: false
+    }
+  },
+  methods: {
+    showLoginModal() {
+      this.$emit('show-login') // Emitir el evento para mostrar el login en NewHeader
+    }
+  }
+}
 </script>
 
 <style scoped>
-
-.card{
+.card {
   width: 16em;
   height: 22em;
   border-radius: 16px;
@@ -30,36 +51,37 @@ export default {
   box-shadow: var(--shadow-1);
 }
 
-main, footer {
+main,
+footer {
   display: flex;
   flex-direction: column;
   align-items: center;
-} 
-.img-container{
+}
+.img-container {
   height: 12em;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
-.img-product{
+.img-product {
   border-radius: 16px 16px 0 0;
   /* width: 5em; */
   max-height: 12em;
 }
-.default-img{
+.default-img {
   width: 6em;
 }
-h3{
-  padding: .3em;
+h3 {
+  padding: 0.3em;
   color: #023e8a;
 }
-.price{
+.price {
   color: #097fff;
   font-size: 1.3em;
-  padding: .3em;
+  padding: 0.3em;
 }
-.detail{
+.detail {
   color: #656565;
   font-size: 14px;
   text-align: center;
