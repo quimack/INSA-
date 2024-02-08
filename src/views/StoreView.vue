@@ -65,12 +65,10 @@
 <script setup>
 import Login from '@/components/Login.vue'
 import ProductComponent from '@/components/ProductComponent.vue'
-import { ref } from 'vue'
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useFirestore } from 'vuefire'
 import { collection, getDocs } from 'firebase/firestore'
 import Pagination from 'v-pagination-3'
-import { ref, onMounted } from 'vue-demi'
 import axios from 'axios'
 import MyPagination from '@/components/MyPagination.vue'
 
