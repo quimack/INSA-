@@ -20,13 +20,13 @@
 </template>
 
 <script>
-import NewHeader from './NewHeader.vue'
-import Login from './Login.vue'
+// import NewHeader from './NewHeader.vue'
+// import Login from './Login.vue'
 export default {
-  components: {
-    NewHeader,
-    Login
-  },
+  // components: {
+  //   NewHeader,
+  //   Login
+  // },
 
   props: ['img', 'name', 'description', 'price', 'categorie', 'subcategorie', 'uxpack'],
   data() {
@@ -75,6 +75,7 @@ footer {
 h3 {
   padding: 0.3em;
   color: #023e8a;
+  text-align: center;
 }
 .price {
   color: #097fff;

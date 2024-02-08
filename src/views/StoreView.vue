@@ -36,17 +36,19 @@
       />
       <div class="products-container">
         <ProductComponent
-          v-for="(item, index) in filteredProducts"
+          v-for="(item, index) in paginatedProducts"
           v-bind:key="index"
-          :img="item.img"
-          :name="item.nombre"
-          :description="item.descripcion"
-          :price="item.precio"
-          :categorie="item.categoria"
-          :subcategorie="item.subcategoria"
-          :uxpack="item.unidades_x_pack"
+          :name="item.ART_DESCR"
+          :price="item.ART_PREVT"
         />
       </div>
+      <pagination
+        :options="{ template: MyPagination }"
+        v-model="page"
+        :records="filteredProducts.length"
+        :per-page="itemsPerPage"
+        @paginate="setPage"
+      />
       <div v-if="showLoginModal" class="modal">
         <div class="modal-content">
           <span class="close" @click="showLoginModal = false">&times;</span>
@@ -65,123 +67,110 @@ import Login from '@/components/Login.vue'
 import ProductComponent from '@/components/ProductComponent.vue'
 import { ref } from 'vue'
 import { onMounted, onUnmounted } from 'vue'
+import { useFirestore } from 'vuefire'
+import { collection, getDocs } from 'firebase/firestore'
+import Pagination from 'v-pagination-3'
+import { ref, onMounted } from 'vue-demi'
+import axios from 'axios'
+import MyPagination from '@/components/MyPagination.vue'
 
-const fileId = '11gGY9ArgQbWmoPX48QAn6x89NMDAa9HRTBvvFSzniuc'
-const search = ref('')
+const db = useFirestore()
+const users = ref([])
 
+// LOGIN
 const showLoginModal = ref(false)
 
-
-
 const handleShowLoginUpdate = (value) => {
-  console.log("Valor recibido desde NewHeader:", value); // Agregar esta línea para imprimir el valor recibido
-  showLoginModal.value = value;
-};
+  console.log('Valor recibido desde NewHeader:', value) // Agregar esta línea para imprimir el valor recibido
+  showLoginModal.value = value
+}
 
 onMounted(() => {
   const eventHandler = (value) => {
-    handleShowLoginUpdate(value);
-  };
-  window.addEventListener('update:show-login', eventHandler);
-  onUnmounted(() => {
-    window.removeEventListener('update:show-login', eventHandler);
-  });
-});
-
-let productsList = ref([
-  {
-    codigo: 109587457,
-    marca: 'Doble A',
-    categoria: 'Cintas',
-    subcategoria: 'Cinta de enmascarar 903',
-    nombre: 'Cinta de papel',
-    descripcion: 'Cinta de pintor, para todo tipo de superficies',
-    medidas: '12x40',
-    precio: 3400,
-    unidades_x_pack: 72,
-    img: 'https://http2.mlstatic.com/D_NQ_NP_818816-MLA51985342337_102022-O.webp'
-  },
-  {
-    codigo: 109583457,
-    marca: 'Loctite',
-    categoria: 'Cintas',
-    subcategoria: 'Cinta de enmascarar 903',
-    nombre: 'Cinta de papel',
-    descripcion: 'Cinta de pintor, para todo tipo de superficies',
-    medidas: '12x40',
-    precio: 3400,
-    unidades_x_pack: 72,
-    img: 'https://http2.mlstatic.com/D_NQ_NP_818816-MLA51985342337_102022-O.webp'
-  },
-  {
-    codigo: 109587456,
-    marca: 'El galgo',
-    categoria: 'Pinceles y brochas',
-    subcategoria: 'Pincel MIX semiprof. V2',
-    nombre: 'Mix semi profesional 10',
-    precio: 1776.84,
-    img: 'https://http2.mlstatic.com/D_NQ_NP_942839-MLU73836730676_012024-O.webp'
-  },
-  {
-    codigo: 109587556,
-    marca: 'El galgo',
-    categoria: 'Pinceles y brochas',
-    subcategoria: 'Brocha y resinero',
-    nombre: 'Nro 20 resina',
-    precio: 1301.16,
-    img: 'https://http2.mlstatic.com/D_NQ_NP_615835-MLA53362335436_012023-O.webp'
-  },
-  {
-    codigo: 109587458,
-    marca: 'Doble A',
-    categoria: 'Cintas',
-    subcategoria: 'Cinta aisladora',
-    nombre: 'Cinta negro',
-    medidas: '18x10',
-    precio: 698.72,
-    unidades_x_pack: 10,
-    img: 'https://http2.mlstatic.com/D_NQ_NP_632286-MLU72564533324_112023-O.webp'
-  },
-  {
-    codigo: 109587457,
-    marca: 'Doble A',
-    categoria: 'Cintas',
-    subcategoria: 'Cinta de enmascarar 903',
-    nombre: 'Cinta de papel',
-    medidas: '12x40',
-    precio: 3400,
-    unidades_x_pack: 72
-  },
-  {
-    codigo: 109587456,
-    marca: 'El galgo',
-    categoria: 'Pinceles y brochas',
-    subcategoria: 'Pincel MIX semiprof. V2',
-    nombre: 'Mix semi profesional 10',
-    precio: 1776.84
-  },
-  {
-    codigo: 109587556,
-    marca: 'El galgo',
-    categoria: 'Pinceles y brochas',
-    subcategoria: 'Brocha y resinero',
-    nombre: 'Nro 20 resina',
-    precio: 1301.16
-  },
-  {
-    codigo: 109587458,
-    marca: 'Doble A',
-    categoria: 'Cintas',
-    subcategoria: 'Cinta aisladora',
-    nombre: 'Cinta negro',
-    medidas: '18x10',
-    precio: 698.72,
-    unidades_x_pack: 10
+    handleShowLoginUpdate(value)
   }
-])
+  window.addEventListener('update:show-login', eventHandler)
+  onUnmounted(() => {
+    window.removeEventListener('update:show-login', eventHandler)
+  })
+})
 
-let products = ref(JSON.parse(JSON.stringify(productsList.value)))
-let filteredProducts = ref(JSON.parse(JSON.stringify(products.value)))
+let productsList = ref([])
+let filteredProducts = ref([])
+let products = ref([])
+
+// Pagination:
+let paginatedProducts = ref([])
+let page = ref(1)
+let itemsPerPage = 12
+const sheetsApi = 'https://sheets.googleapis.com'
+const spreadsheetId = import.meta.env.VITE_SPREADSHEET_ID
+const apiKey = import.meta.env.VITE_API_KEY
+
+onMounted(async () => {
+  // GOOGLE SHEETS:
+  let sheetData = await axios({
+    method: 'get',
+    url: `${sheetsApi}/v4/spreadsheets/${spreadsheetId}`,
+    params: {
+      key: apiKey
+    }
+  })
+  let endRange = sheetData.data.sheets[0].properties.gridProperties.rowCount
+  let range = `A1:C${Number(endRange) - 3}`
+  let sheetValues = await axios({
+    method: 'get',
+    url: `${sheetsApi}/v4/spreadsheets/${spreadsheetId}/values/${range}`,
+    params: {
+      key: apiKey
+    }
+  })
+  let keys = []
+  sheetValues.data.values.forEach((row, i) => {
+    let obj = {}
+    row.forEach((cell, index) => {
+      if (i === 0) keys.push(cell)
+      if (index === 0) obj[keys[0]] = cell
+      if (index === 1) obj[keys[1]] = cell
+      if (index === 2) obj[keys[2]] = cell
+      if (index === 3) obj[keys[3]] = cell
+    })
+    productsList.value.push(obj)
+  })
+  productsList.value = productsList.value.sort((a, b) => {
+    if (a.ART_DESCR > b.ART_DESCR) {
+      return 1
+    }
+    if (a.ART_DESCR < b.ART_DESCR) {
+      return -1
+    }
+    return 0
+  })
+
+  products.value = JSON.parse(JSON.stringify(productsList.value))
+  filteredProducts.value = JSON.parse(JSON.stringify(products.value))
+  setPage(1)
+
+  // USERS
+  let usersData = await getDocs(collection(db, 'usuarios'))
+  usersData.forEach((user) => {
+    console.log(user.data())
+    users.value.push(user.data())
+  })
+})
+
+// PAGINATION
+function setPage(page) {
+  console.log(page)
+  const startIndex = (page - 1) * itemsPerPage
+  const endIndex =
+    startIndex + itemsPerPage > filteredProducts.value.length
+      ? filteredProducts.value.length
+      : startIndex + itemsPerPage
+  paginatedProducts.value = filteredProducts.value.slice(startIndex, endIndex)
+}
+
+const search = ref('')
 
 let brands = ref([
   {
@@ -347,9 +336,6 @@ function filterBySearch(value) {
   justify-content: flex-start;
   align-items: flex-start;
   padding-left: 3vw;
-  /* background-color: #DCE8EF; */
-  /* padding: 8em 1em 3em 1em; */
-  /* font-family: var(--ff-poppins); */
   margin-top: 3em;
 }
 
@@ -407,7 +393,6 @@ function filterBySearch(value) {
   flex-wrap: wrap;
   padding-top: 2em;
 }
-
 .modal {
   display: none;
   position: fixed;
