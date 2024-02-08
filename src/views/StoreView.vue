@@ -49,7 +49,7 @@
         :per-page="itemsPerPage"
         @paginate="setPage"
       />
-      <div v-if="showLoginModal" class="modal">
+      <div v-if="computedShowLoginModal" class="modal">
         <div class="modal-content">
           <span class="close" @click="showLoginModal = false">&times;</span>
           <Login :showLogin="true" />
@@ -65,33 +65,40 @@
 <script setup>
 import Login from '@/components/Login.vue'
 import ProductComponent from '@/components/ProductComponent.vue'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, computed } from 'vue'
 import { useFirestore } from 'vuefire'
 import { collection, getDocs } from 'firebase/firestore'
 import Pagination from 'v-pagination-3'
 import axios from 'axios'
 import MyPagination from '@/components/MyPagination.vue'
+import { store } from '../store'
+
+const computedShowLoginModal = computed(() => {
+  return store.showLoginModal;
+});
 
 const db = useFirestore()
 const users = ref([])
 
 // LOGIN
-const showLoginModal = ref(false)
+// const showLoginModal = ref(store.showLoginModal)
 
 const handleShowLoginUpdate = (value) => {
   console.log('Valor recibido desde NewHeader:', value) // Agregar esta línea para imprimir el valor recibido
-  showLoginModal.value = value
+  // showLoginModal.value = value
+  store.showLoginModal = value;
 }
 
 onMounted(() => {
-  const eventHandler = (value) => {
-    handleShowLoginUpdate(value)
-  }
-  window.addEventListener('update:show-login', eventHandler)
-  onUnmounted(() => {
-    window.removeEventListener('update:show-login', eventHandler)
-  })
+  console.log(store.showLoginModal)
+  // const eventHandler = (value) => {
+  //   handleShowLoginUpdate(value)
+  // }
+  // window.addEventListener('update:show-login', eventHandler)
 })
+// onUnmounted(() => {
+//   window.removeEventListener('update:show-login', eventHandler)
+// })
 
 let productsList = ref([])
 let filteredProducts = ref([])

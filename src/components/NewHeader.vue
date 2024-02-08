@@ -88,7 +88,7 @@
 
           <button
             v-if="isStorePage"
-            @click="showLogin = !showLogin"
+            @click="handleLogin"
             class="header-bottom-actions-btn"
             aria-label="Profile"
           >
@@ -110,23 +110,24 @@
       </div>
     </div>
   </header>
-  <Login :showLogin="showLogin" />
+  <!-- <Login :showLogin="showLogin" /> -->
   <!-- Aquí se muestra el componente Login -->
 </template>
 
 <script>
-import Login from '@/components/Login.vue'
+import { store } from '../store'
+// import Login from '@/components/Login.vue'
 
 export default {
-  components: {
-    Login
-  },
-  name: 'NewHeader',
-  data() {
-    return {
-      showLogin: false
+  // components: {
+  //   Login
+  // },
+  data(){
+    return{
+      showLogin: store.showLoginModal
     }
   },
+  name: 'NewHeader',
   computed: {
     isStorePage() {
       // Verifica si la ruta actual es '/tienda'
@@ -134,16 +135,20 @@ export default {
     }
   },
   methods: {
+    handleLogin(){
+      store.showLoginModal = !store.showLoginModal
+      console.log(store.showLoginModal)
+    },
     routeStore() {
       this.$router.push('/tienda')
     },
     routeStoreAndShowLogin() {
       if (this.isStorePage) {
         // Muestra el valor de showLogin en la consola
-        this.showLogin = true
+        store.showLoginModal = true
 
         // Emitir el evento update:show-login con el valor de true
-        this.$emit('update:show-login', true)
+        // this.$emit('update:show-login', true)
         console.log('Valor de showLogin antes de emitir el evento:', this.isStorePage)
       } else {
         // Si no estás en la página de tienda, redirige a la tienda sin mostrar el login
@@ -154,7 +159,7 @@ export default {
     routeHome() {
       // Redirigir a la página de inicio
       this.$router.push('/')
-      this.showLogin = false
+      store.showLoginModal = false
       console.log('Cerradooooo!!!!', this.showLogin)
     }
   }

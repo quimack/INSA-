@@ -15,6 +15,7 @@
     <footer class="price">
       <div>$ {{ price }}</div>
       <div class="detail" v-if="uxpack">unidades x pack: {{ uxpack }}</div>
+      <button class="btn btn-primary">AGREGAR</button>
     </footer>
   </div>
 </template>
