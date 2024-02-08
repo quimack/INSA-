@@ -21,7 +21,7 @@
                   <ion-icon name="location-outline"></ion-icon>
 
                   <address>
-                    Av. Sta María de Las Conchas 2210. Rincón de Milberg. Tigre, Buenos Aires
+                    Av. Sta María 2200. Rincón de Milberg. Tigre, Buenos Aires
                   </address>
                 </a>
               </li>
@@ -35,10 +35,10 @@
               </li>
 
               <li>
-                <a href="mailto:ferreteríainsaurralde@gmail.com" class="contact-link">
+                <a href="mailto:ferreteroinsaurralde@gmail.com" class="contact-link">
                   <ion-icon name="mail-outline"></ion-icon>
 
-                  <span>ferreteríainsaurralde@gmail.com</span>
+                  <span>ferreteroinsaurralde@gmail.com</span>
                 </a>
               </li>
             </ul>

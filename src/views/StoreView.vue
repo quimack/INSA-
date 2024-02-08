@@ -47,6 +47,12 @@
           :uxpack="item.unidades_x_pack"
         />
       </div>
+      <div v-if="showLoginModal" class="modal">
+        <div class="modal-content">
+          <span class="close" @click="showLoginModal = false">&times;</span>
+          <Login :showLogin="true" />
+        </div>
+      </div>
     </main>
   </div>
 </template>
@@ -55,11 +61,32 @@
     </button> -->
 
 <script setup>
+import Login from '@/components/Login.vue'
 import ProductComponent from '@/components/ProductComponent.vue'
 import { ref } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 
 const fileId = '11gGY9ArgQbWmoPX48QAn6x89NMDAa9HRTBvvFSzniuc'
 const search = ref('')
+
+const showLoginModal = ref(false)
+
+
+
+const handleShowLoginUpdate = (value) => {
+  console.log("Valor recibido desde NewHeader:", value); // Agregar esta línea para imprimir el valor recibido
+  showLoginModal.value = value;
+};
+
+onMounted(() => {
+  const eventHandler = (value) => {
+    handleShowLoginUpdate(value);
+  };
+  window.addEventListener('update:show-login', eventHandler);
+  onUnmounted(() => {
+    window.removeEventListener('update:show-login', eventHandler);
+  });
+});
 
 let productsList = ref([
   {
@@ -204,7 +231,6 @@ function showCategorie(index) {
 }
 
 function showSubCategories(index, i) {
-
   brands.value.forEach((brand, brandIndex) => {
     if (index === brandIndex) {
       brand.categories.forEach((categorie, categorieIndex) => {
@@ -224,16 +250,12 @@ function filterByBrand(brand) {
 }
 
 function filterByCategorie(brand, categorie) {
-  products.value = productsList.value.filter(
-    (i) => {
-      if(i.marca === brand.name && i.categoria === categorie.name) return i
-    }
-  )
-  filteredProducts.value = productsList.value.filter(
-    (i) => {
-      if(i.marca === brand.name && i.categoria === categorie.name) return i
-    }
-  )
+  products.value = productsList.value.filter((i) => {
+    if (i.marca === brand.name && i.categoria === categorie.name) return i
+  })
+  filteredProducts.value = productsList.value.filter((i) => {
+    if (i.marca === brand.name && i.categoria === categorie.name) return i
+  })
 }
 
 function filterBySearch(value) {
@@ -248,7 +270,6 @@ function filterBySearch(value) {
       return i
     }
   })
-
 }
 
 //   startGoogleDriveLogin() {
@@ -385,5 +406,40 @@ function filterBySearch(value) {
   display: flex;
   flex-wrap: wrap;
   padding-top: 2em;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 </style>

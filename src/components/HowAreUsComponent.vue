@@ -11,8 +11,8 @@
         <p class="hero-text">
           Desde hace más de 30 años. Tenemos una amplia trayectoria en el sector y una variada gama
           de productos. ¡Combinamos la calidad con los mejores precios! Somos
-          <strong>representantes oficiales</strong> de grandes marcas tales como:
-          <span class="light-color"> Doble A, Tiroli, Norton, Teckbond y El Galgo.</span> Brindamos
+          <strong>representantes oficiales</strong> de grandes  tales como:
+          <span class="light-color">Aliafor,Patrol,Venturo, Doble A, Tyrolit, Norton, Teckbond y El Galgo.</span> Brindamos
           soluciones a nuestros clientes más allá de la venta de productos.
         </p>
         <button class="btn" @click="routeStore()">Conoce Nuestra Tienda On-line</button>

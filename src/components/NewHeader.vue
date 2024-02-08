@@ -6,10 +6,10 @@
       <div class="container-header">
         <ul class="header-top-list">
           <li>
-            <a href="mailto:ferreteríainsaurralde@gmail.com" class="header-top-link">
+            <a href="mailto: ferreteroinsaurralde@gmail.com" class="header-top-link">
               <ion-icon name="mail-outline"></ion-icon>
 
-              <span>ferreteríainsaurralde@gmail.com</span>
+              <span>ferreteroinsaurralde@gmail.com</span>
             </a>
           </li>
         </ul>
@@ -139,18 +139,23 @@ export default {
     },
     routeStoreAndShowLogin() {
       if (this.isStorePage) {
-        // Solo muestra el login si estás en la página de tienda
+        // Muestra el valor de showLogin en la consola
         this.showLogin = true
+
+        // Emitir el evento update:show-login con el valor de true
+        this.$emit('update:show-login', true)
+        console.log('Valor de showLogin antes de emitir el evento:', this.isStorePage)
       } else {
         // Si no estás en la página de tienda, redirige a la tienda sin mostrar el login
         this.routeStore()
-        this.showLogin = false
+        console.log('??????????????', this.showLogin)
       }
     },
     routeHome() {
       // Redirigir a la página de inicio
       this.$router.push('/')
       this.showLogin = false
+      console.log('Cerradooooo!!!!', this.showLogin)
     }
   }
 }
