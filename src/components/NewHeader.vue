@@ -45,7 +45,6 @@
         </div>
         <nav class="navbar" data-navbar>
           <div class="navbar-top">
-            
             <RouterLink to="/" class="logo">INSA</RouterLink>
 
             <button class="nav-close-btn" data-nav-close-btn aria-label="Close Menu">
@@ -109,20 +108,6 @@ export default {
     routeStore() {
       this.$router.push('/tienda')
     },
-    // routeStoreAndShowLogin() {
-    //   if (this.isStorePage) {
-    //     // Muestra el valor de showLogin en la consola
-    //     store.showLoginModal = true
-
-    //     // Emitir el evento update:show-login con el valor de true
-    //     // this.$emit('update:show-login', true)
-    //     console.log('Valor de showLogin antes de emitir el evento:', this.isStorePage)
-    //   } else {
-    //     // Si no estás en la página de tienda, redirige a la tienda sin mostrar el login
-    //     this.routeStore()
-    //     console.log('??????????????', this.showLogin)
-    //   }
-    // },
     routeHome() {
       this.$router.push('/')
     }
