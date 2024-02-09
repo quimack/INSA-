@@ -110,21 +110,24 @@
       </div>
     </div>
   </header>
-  <!-- <Login :showLogin="showLogin" /> -->
+  <div class="login-container">
+
+    <Login :showLogin="showLogin" />
+  </div>
   <!-- Aquí se muestra el componente Login -->
 </template>
 
 <script>
 import { store } from '../store'
-// import Login from '@/components/Login.vue'
+import Login from '@/components/Login.vue'
 
 export default {
-  // components: {
-  //   Login
-  // },
-  data(){
-    return{
-      showLogin: store.showLoginModal
+  components: {
+    Login
+  },
+  data() {
+    return {
+      showLogin: false
     }
   },
   name: 'NewHeader',
@@ -135,9 +138,9 @@ export default {
     }
   },
   methods: {
-    handleLogin(){
-      store.showLoginModal = !store.showLoginModal
-      console.log(store.showLoginModal)
+    handleLogin() {
+      /* store.showLoginModal = !store.showLoginModal */
+      this.showLogin = !this.showLogin
     },
     routeStore() {
       this.$router.push('/tienda')

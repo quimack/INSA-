@@ -74,8 +74,8 @@ import MyPagination from '@/components/MyPagination.vue'
 import { store } from '../store'
 
 const computedShowLoginModal = computed(() => {
-  return store.showLoginModal;
-});
+  return store.showLoginModal
+})
 
 const db = useFirestore()
 const users = ref([])
@@ -86,7 +86,7 @@ const users = ref([])
 const handleShowLoginUpdate = (value) => {
   console.log('Valor recibido desde NewHeader:', value) // Agregar esta línea para imprimir el valor recibido
   // showLoginModal.value = value
-  store.showLoginModal = value;
+  store.showLoginModal = value
 }
 
 onMounted(() => {
@@ -182,13 +182,21 @@ let brands = ref([
     name: 'Doble A',
     categories: [
       {
-        name: 'Cintas',
+        name: 'Cintas y Discos',
         show_subcategories: false
       },
       {
-        name: 'Discos',
+        name: 'Velcro',
         show_subcategories: false,
         subcategories: [{ name: 'Discos papel' }, { name: 'Discos de corte' }]
+      },
+      {
+        name: 'Lijas',
+        show_subcategories: false
+      },
+      {
+        name: 'Bandas',
+        show_subcategories: false
       }
     ],
     show_categories: false
@@ -196,20 +204,76 @@ let brands = ref([
   {
     name: 'El galgo',
     categories: [
-      { name: 'Lijas y telas', show_subcategories: false },
-      { name: 'Pinceles y brochas', show_subcategories: false },
-      { name: 'Rodillos y filtros', show_subcategories: false }
+      { name: 'Pinceles', show_subcategories: false },
+      { name: 'Rodillos', show_subcategories: false },
+      { name: 'Lijas', show_subcategories: false }
     ],
     show_categories: false
   },
   {
-    name: 'Loctite',
-    categories: [],
+    name: 'Tyrolit',
+    categories: [{ name: 'Discos y diamantados', show_subcategories: false }],
     show_categories: false
   },
   {
     name: 'Congo',
-    categories: [{ name: 'Cola y cemento', show_subcategories: false }],
+    categories: [
+      { name: 'Cola', show_subcategories: false },
+      { name: 'Cemento', show_subcategories: false }
+    ],
+    show_categories: false
+  },
+  {
+    name: 'Aliafor',
+    categories: [
+      { name: 'Discos', show_subcategories: false },
+      { name: 'Hile next', show_subcategories: false }
+    ],
+    show_categories: false
+  },
+  {
+    name: 'Patrol',
+    categories: [],
+    show_categories: false
+  },
+  {
+    name: 'Venturo',
+    categories: [],
+    show_categories: false
+  },
+  {
+    name: 'Norton',
+    categories: [],
+    show_categories: false
+  },
+  {
+    name: 'Ruhlmann',
+    categories: [],
+    show_categories: false
+  },
+  {
+    name: 'Tek bond',
+    categories: [],
+    show_categories: false
+  },
+  {
+    name: 'Electrodos',
+    categories: [
+      { name: 'Sideral', show_subcategories: false },
+      { name: 'Conarco', show_subcategories: false }
+    ],
+    show_categories: false
+  },
+  {
+    name: 'Buloneria',
+    categories: [
+      { name: 'Bulones', show_subcategories: false },
+      { name: 'Tornillos', show_subcategories: false },
+      { name: 'Arandelas', show_subcategories: false },
+      { name: 'Tira fondos', show_subcategories: false },
+      { name: 'Varios', show_subcategories: false },
+    
+    ],
     show_categories: false
   }
 ])

@@ -15,7 +15,7 @@
 import 'vue3-carousel/dist/carousel.css'
 import { Carousel, Slide, Navigation } from 'vue3-carousel'
 
-const images = ['/img/demo.jpg', '/img/demo2.jpg', ]
+const images = ['/img/moladora.jpg', '/img/demo2.jpg', '/img/rodillos1.jpg', '/img/llaves1.jpg', '/img/tornillos.jpg']
 </script>
 
 <style scoped>
