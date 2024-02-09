@@ -15,31 +15,19 @@
     <footer class="price">
       <div>$ {{ price }}</div>
       <div class="detail" v-if="uxpack">unidades x pack: {{ uxpack }}</div>
-      <button class="btn btn-primary">AGREGAR</button>
+      <button @click="$emit('openLogin')" class="btn btn-primary">AGREGAR</button>
     </footer>
   </div>
 </template>
 
 <script>
-// import NewHeader from './NewHeader.vue'
-// import Login from './Login.vue'
 export default {
-  // components: {
-  //   NewHeader,
-  //   Login
-  // },
-
   props: ['img', 'name', 'description', 'price', 'categorie', 'subcategorie', 'uxpack'],
   data() {
     return {
       showLogin: false
     }
   },
-  methods: {
-    showLoginModal() {
-      this.$emit('show-login') // Emitir el evento para mostrar el login en NewHeader
-    }
-  }
 }
 </script>
 

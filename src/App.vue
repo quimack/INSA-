@@ -1,17 +1,63 @@
-<script setup>
+<script>
 import { RouterView } from 'vue-router'
 import FooterComponent from '@/components/FooterComponent.vue'
-import NewHeader from './components/NewHeader.vue';
+import NewHeader from './components/NewHeader.vue'
+import Login from '@/components/Login.vue'
+
+export default {
+  components: {
+    NewHeader,
+    RouterView,
+    Login,
+    FooterComponent
+  },
+  data() {
+    return {
+      showLogin: false
+    }
+  },
+  methods: {
+    handleLogin() {
+      console.log('hola')
+      this.showLogin = !this.showLogin
+    }
+  }
+}
 </script>
 
 <template>
   <div>
-    <NewHeader/>
-    <RouterView />
+    <NewHeader :showLogin="false" @openLogin="handleLogin" />
+    <RouterView @openLogin="handleLogin" />
+    <vue-final-modal v-model="showLogin" classes="modal-container" content-class="modal-content">
+      <Login :showLogin="true" />
+    </vue-final-modal>
     <FooterComponent />
   </div>
 </template>
 
-<style>
-
+<style scoped>
+:deep(.modal-container) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+:deep(.modal-content) {
+  display: flex;
+  flex-direction: column;
+  margin: 0 1rem;
+  min-width: 28vw;
+  max-width: 400px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+}
+.modal__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.dark-mode div:deep(.modal-content) {
+  border-color: #2d3748;
+  background-color: #1a202c;
+}
 </style>

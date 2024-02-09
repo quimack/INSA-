@@ -33,21 +33,19 @@
 
     <div class="header-bottom">
       <div class="container-header">
-        <div class="header-bottom-left">
+        <div class="header-bottom-left" @click="routeHome">
           <a href="#" class="logo">
-            <img src="../assets/images/INSA.png" to="/" alt="Homeverse logo" />
+            <img src="../assets/images/INSA.png" to="/" alt="logo" />
           </a>
-
-          <!--           <RouterLink to="/" class="logo"><h1>INSA</h1></RouterLink>
-          <div class="txt">Distribuidor</div> -->
         </div>
         <div v-if="!isStorePage" class="header-bottom-right">
-          <button v-if="!isStorePage" class="header-top-btn" @click="routeStoreAndShowLogin">
+          <button v-if="!isStorePage" class="header-top-btn" @click="routeStore">
             Ir a la tienda
           </button>
         </div>
         <nav class="navbar" data-navbar>
           <div class="navbar-top">
+            
             <RouterLink to="/" class="logo">INSA</RouterLink>
 
             <button class="nav-close-btn" data-nav-close-btn aria-label="Close Menu">
@@ -55,23 +53,7 @@
             </button>
           </div>
 
-          <div class="navbar-bottom">
-            <!-- <ul class="navbar-list">
-              <li>
-                <a href="#home"  class="navbar-link" data-nav-link>INICIO</a>
-              </li>
-
-              <li>
-                <a href="#about" class="navbar-link" @click="routeStore()" data-nav-link
-                  >Tienda ON-LINE</a
-                >
-              </li>
-
-              <li>
-                <a href="#service" class="navbar-link" data-nav-link>Contacto</a>
-              </li>
-            </ul> -->
-          </div>
+          <div class="navbar-bottom"></div>
         </nav>
 
         <div class="header-bottom-actions">
@@ -88,7 +70,7 @@
 
           <button
             v-if="isStorePage"
-            @click="handleLogin"
+            @click="$emit('openLogin')"
             class="header-bottom-actions-btn"
             aria-label="Profile"
           >
@@ -110,69 +92,47 @@
       </div>
     </div>
   </header>
-  <div class="login-container">
-
-    <Login :showLogin="showLogin" />
-  </div>
-  <!-- Aquí se muestra el componente Login -->
 </template>
 
 <script>
-import { store } from '../store'
-import Login from '@/components/Login.vue'
+import { RouterLink } from 'vue-router'
 
 export default {
-  components: {
-    Login
-  },
-  data() {
-    return {
-      showLogin: false
-    }
-  },
   name: 'NewHeader',
+  components: [RouterLink],
   computed: {
     isStorePage() {
-      // Verifica si la ruta actual es '/tienda'
       return this.$route.path === '/tienda'
     }
   },
   methods: {
-    handleLogin() {
-      /* store.showLoginModal = !store.showLoginModal */
-      this.showLogin = !this.showLogin
-    },
     routeStore() {
       this.$router.push('/tienda')
     },
-    routeStoreAndShowLogin() {
-      if (this.isStorePage) {
-        // Muestra el valor de showLogin en la consola
-        store.showLoginModal = true
+    // routeStoreAndShowLogin() {
+    //   if (this.isStorePage) {
+    //     // Muestra el valor de showLogin en la consola
+    //     store.showLoginModal = true
 
-        // Emitir el evento update:show-login con el valor de true
-        // this.$emit('update:show-login', true)
-        console.log('Valor de showLogin antes de emitir el evento:', this.isStorePage)
-      } else {
-        // Si no estás en la página de tienda, redirige a la tienda sin mostrar el login
-        this.routeStore()
-        console.log('??????????????', this.showLogin)
-      }
-    },
+    //     // Emitir el evento update:show-login con el valor de true
+    //     // this.$emit('update:show-login', true)
+    //     console.log('Valor de showLogin antes de emitir el evento:', this.isStorePage)
+    //   } else {
+    //     // Si no estás en la página de tienda, redirige a la tienda sin mostrar el login
+    //     this.routeStore()
+    //     console.log('??????????????', this.showLogin)
+    //   }
+    // },
     routeHome() {
-      // Redirigir a la página de inicio
       this.$router.push('/')
-      store.showLoginModal = false
-      console.log('Cerradooooo!!!!', this.showLogin)
     }
   }
 }
 </script>
 
-<style scope>
+<style scoped>
 .header {
   position: relative;
-
   z-index: 2;
 }
 

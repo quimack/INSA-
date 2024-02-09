@@ -74,6 +74,12 @@
 </template>
 
 <script>
+import { useFirestore } from 'vuefire'
+import { collection, getDocs } from 'firebase/firestore'
+import { ref } from 'vue'
+// const db = useFirestore()
+// const users = ref([])
+
 export default {
   props: {
     showLogin: {
@@ -94,6 +100,13 @@ export default {
     }
   },
   methods: {
+    // async getUsers() {
+    //   let usersData = await getDocs(collection(db, 'usuarios'))
+    //   usersData.forEach((user) => {
+    //     console.log(user.data())
+    //     users.value.push(user.data())
+    //   })
+    // },
     handleSubmit() {
       // Agregar lógica de autenticación o registro aquí
       console.log('Nombre de usuario:', this.username)
@@ -124,7 +137,6 @@ export default {
 <style scoped>
 .login-container {
   max-width: 400px;
-  margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -256,12 +268,12 @@ button:hover {
   margin-bottom: 16px;
 }
 
-.reset-password-button{
+.reset-password-button {
   width: 100%;
   text-align: center;
   margin-block: 20px;
 }
-.width-100{
+.width-100 {
   width: 100%;
 }
 @media screen and (max-width: 600px) {

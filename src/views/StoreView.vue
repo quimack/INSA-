@@ -37,11 +37,13 @@
       <div class="products-container">
         <ProductComponent
           v-for="(item, index) in paginatedProducts"
+          @openLogin="openLogin"
           v-bind:key="index"
           :name="item.ART_DESCR"
           :price="item.ART_PREVT"
         />
       </div>
+
       <pagination
         :options="{ template: MyPagination }"
         v-model="page"
@@ -49,56 +51,21 @@
         :per-page="itemsPerPage"
         @paginate="setPage"
       />
-      <div v-if="computedShowLoginModal" class="modal">
-        <div class="modal-content">
-          <span class="close" @click="showLoginModal = false">&times;</span>
-          <Login :showLogin="true" />
-        </div>
-      </div>
     </main>
   </div>
 </template>
-<!-- <button @click="startGoogleDriveLogin">
-      Iniciar sesión con Google Drive
-    </button> -->
 
 <script setup>
-import Login from '@/components/Login.vue'
 import ProductComponent from '@/components/ProductComponent.vue'
-import { onMounted, onUnmounted, ref, computed } from 'vue'
-import { useFirestore } from 'vuefire'
-import { collection, getDocs } from 'firebase/firestore'
+import { onMounted, ref } from 'vue'
 import Pagination from 'v-pagination-3'
 import axios from 'axios'
 import MyPagination from '@/components/MyPagination.vue'
-import { store } from '../store'
 
-const computedShowLoginModal = computed(() => {
-  return store.showLoginModal
-})
-
-const db = useFirestore()
-const users = ref([])
-
-// LOGIN
-// const showLoginModal = ref(store.showLoginModal)
-
-const handleShowLoginUpdate = (value) => {
-  console.log('Valor recibido desde NewHeader:', value) // Agregar esta línea para imprimir el valor recibido
-  // showLoginModal.value = value
-  store.showLoginModal = value
+const emit = defineEmits(['openLogin']);
+function openLogin(){
+  emit('openLogin');
 }
-
-onMounted(() => {
-  console.log(store.showLoginModal)
-  // const eventHandler = (value) => {
-  //   handleShowLoginUpdate(value)
-  // }
-  // window.addEventListener('update:show-login', eventHandler)
-})
-// onUnmounted(() => {
-//   window.removeEventListener('update:show-login', eventHandler)
-// })
 
 let productsList = ref([])
 let filteredProducts = ref([])
@@ -108,6 +75,7 @@ let products = ref([])
 let paginatedProducts = ref([])
 let page = ref(1)
 let itemsPerPage = 12
+
 const sheetsApi = 'https://sheets.googleapis.com'
 const spreadsheetId = import.meta.env.VITE_SPREADSHEET_ID
 const apiKey = import.meta.env.VITE_API_KEY
@@ -155,18 +123,10 @@ onMounted(async () => {
   products.value = JSON.parse(JSON.stringify(productsList.value))
   filteredProducts.value = JSON.parse(JSON.stringify(products.value))
   setPage(1)
-
-  // USERS
-  let usersData = await getDocs(collection(db, 'usuarios'))
-  usersData.forEach((user) => {
-    console.log(user.data())
-    users.value.push(user.data())
-  })
 })
 
 // PAGINATION
 function setPage(page) {
-  console.log(page)
   const startIndex = (page - 1) * itemsPerPage
   const endIndex =
     startIndex + itemsPerPage > filteredProducts.value.length
@@ -355,7 +315,6 @@ function filterBySearch(value) {
 //       const apiKey = "AIzaSyB0qxJbZcpzSm7DjpN181iRQmthsIivkEQ";
 //       const searchDoc =
 //         "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest";
-//       console.log("API KEY", apiKey, clientId, searchDoc);
 //       // Configuración para obtener el token de acceso
 //       const tokenEndpoint = "https://oauth2.googleapis.com/token";
 //       const clientSecret = "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"; // Reemplaza con tu secreto de cliente
