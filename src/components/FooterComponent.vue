@@ -5,7 +5,7 @@
         <div class="footer-brand">
           <div class="width-100">
             <a href="#" class="logo">
-              <img src="../assets/images/INSA.png" to="/" alt="Homeverse logo" />
+              <img src="../assets/images/insainvertido.png" to="/" alt="Homeverse logo" />
             </a>
 
 

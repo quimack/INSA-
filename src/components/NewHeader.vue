@@ -35,7 +35,7 @@
       <div class="container-header">
         <div class="header-bottom-left">
           <a href="#" class="logo">
-            <img src="../assets/images/INSA.png" to="/" alt="Homeverse logo" />
+            <img src="../assets/images/insanuevo.png" to="/" alt="Homeverse logo" />
           </a>
 
           <!--           <RouterLink to="/" class="logo"><h1>INSA</h1></RouterLink>
