@@ -12,5 +12,11 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": false,
-  }
+  },
+  "typeRoots": [
+    "./typings",
+    "./node_modules/@types/"
+  ],
+  "noImplicitAny": false
+
 }

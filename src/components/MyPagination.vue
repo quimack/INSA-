@@ -50,11 +50,6 @@ import { markRaw } from 'vue'
 export default markRaw({
   name: 'MyPagination',
   props: ['props'],
-  mounted() {
-    console.log(this.props)
-    this.props.theme.firstPage = "VuePagination__pagination-item page-item VuePagination__pagination-item-first-page"
-    this.props.theme.lastPage = "VuePagination__pagination-item page-item VuePagination__pagination-item-last-page"
-  },
 })
 </script>
 
