@@ -2,13 +2,13 @@
 import { RouterView } from 'vue-router'
 import FooterComponent from '@/components/FooterComponent.vue'
 import NewHeader from './components/NewHeader.vue'
-import Login from '@/components/Login.vue'
+import LoginComponent from '@/components/LoginComponent.vue'
 
 export default {
   components: {
     NewHeader,
     RouterView,
-    Login,
+    LoginComponent,
     FooterComponent
   },
   data() {
@@ -18,7 +18,6 @@ export default {
   },
   methods: {
     handleLogin() {
-      console.log('hola')
       this.showLogin = !this.showLogin
     }
   }
@@ -30,7 +29,7 @@ export default {
     <NewHeader :showLogin="false" @openLogin="handleLogin" />
     <RouterView @openLogin="handleLogin" />
     <vue-final-modal v-model="showLogin" classes="modal-container" content-class="modal-content">
-      <Login :showLogin="true" />
+      <LoginComponent :showLogin="true" />
     </vue-final-modal>
     <FooterComponent />
   </div>

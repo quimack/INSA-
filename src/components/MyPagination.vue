@@ -2,8 +2,8 @@
   <div class="VuePagination" :class="props.theme.wrapper">
     <nav :class="props.theme.nav">
       <ul v-show="props.showPagination" :class="props.theme.list">
-        <li v-if="props.hasEdgeNav" :class="props.theme.firstPage" @click="props.setFirstPage">
-          <button type="button" v-bind="props.firstPageProps">{{ props.texts.first }}</button>
+        <li v-if="true" :class="props.theme.firstPage" @click="props.setFirstPage">
+          <button type="button" v-bind="props.firstPageProps">Primera página</button>
         </li>
 
         <li v-if="props.hasChunksNav" :class="props.theme.prevChunk" @click="props.setPrevChunk">
@@ -19,12 +19,11 @@
           :key="page"
           :class="{
             [props.theme.link]: true,
-            'number': true,
-            'selected': props.texts.last === page
+            
           }"
           v-on="props.pageEvents(page)"
         >
-          <button type="button" v-bind="props.aProps" :class="props.theme.link">{{ page }}</button>
+          <button type="button" v-bind="props.aProps" :class="{[props.theme.link]: true, 'selected': props.page === page}" class="number">{{ page }}</button>
         </li>
 
         <li :class="props.theme.next" @click="props.setNextPage">
@@ -35,8 +34,8 @@
           <button type="button" v-bind="props.nextChunkProps">{{ props.texts.nextChunk }}</button>
         </li>
 
-        <li v-if="props.hasEdgeNav" :class="props.theme.lastPage" @click="props.setLastPage">
-          <button type="button" v-bind="props.lastPageProps">{{ props.texts.last }}</button>
+        <li v-if="true" :class="props.theme.lastPage" @click="props.setLastPage">
+          <button type="button" v-bind="props.lastPageProps">Última página</button>
         </li>
       </ul>
 
@@ -50,6 +49,9 @@ import { markRaw } from 'vue'
 export default markRaw({
   name: 'MyPagination',
   props: ['props'],
+  mounted() {
+    console.log(this.props)
+  },
 })
 </script>
 
@@ -68,14 +70,15 @@ ul {
 li {
   margin: 1vw;
 }
-li.number.selected.page-link{
-    color: red !important;
-}
-.page-link {
-  color: #097fff;
-}
-.page-link:hover {
+button.selected.page-link{
   color: #023e8a;
-  font-size: 1.1em;
+  font-weight: 800;
+} 
+.number, button {
+  color: #097fff;
+  font-size: 1.2em;
+}
+.number:hover, button:hover{
+  color: #023e8a;
 }
 </style>
