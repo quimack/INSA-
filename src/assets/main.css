@@ -76,6 +76,11 @@ ion-icon {
   display: block;
 }
 
+button:disabled{
+  opacity: 0.7;
+  cursor: default !important;
+}
+
 li {
   list-style: none;
 }

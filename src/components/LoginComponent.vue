@@ -1,19 +1,24 @@
 <template>
   <div v-if="showLogin" class="login-container">
+    <!-- LOGIN -->
     <form
       v-if="!showRegister && !showForgotPassword"
       class="login-form"
       @submit.prevent="handleSubmit"
     >
-      <label for="username">Nombre de Usuario:</label>
-      <input type="text" id="username" v-model="username" required />
+      <label for="email">Correo electrónico:</label>
+      <input type="text" id="email" v-model="email" required />
 
-      <label for="password">Contraseña:</label>
-      <input type="password" id="password" v-model="password" required />
+      <label for="contrasenia">Contraseña:</label>
+      <input type="password" id="contrasenia" v-model="contrasenia" required />
 
-      <button type="submit" class="login-button">Iniciar Sesión</button>
+      <button type="submit" class="login-button">
+        <span v-if="!showSpinner">Iniciar Sesión</span>
+        <VueSpinner v-if="showSpinner" size="30" color="#fff" />
+      </button>
     </form>
 
+    <!-- REGISTRO -->
     <form v-if="showRegister" class="register-form" @submit.prevent="handleRegister">
       <div class="form-group">
         <label for="nombre">Nombre:</label>
@@ -35,12 +40,45 @@
         <input type="email" id="email" v-model="email" required />
       </div>
 
-      <button type="submit" class="register-button margin-bottom">Registrarse</button>
+      <div class="form-group">
+        <label for="contrasenia">Contraseña:</label>
+        <input type="password" id="contrasenia" v-model="contrasenia" required />
+      </div>
+
+      <div class="form-group">
+        <label for="repeatContrasenia">Repetir contraseña:</label>
+        <input
+          type="password"
+          id="repeatContrasenia"
+          v-model="repeatContrasenia"
+          required
+          @input="passwordValidator"
+        />
+        <div v-if="!passwordValidator" class="errorMsg">Las contraseñas deben coincidir</div>
+      </div>
+
+      <button
+        type="submit"
+        class="register-button margin-bottom"
+        :disabled="
+          !passwordValidator() ||
+          this.nombre === '' ||
+          this.apellido === '' ||
+          this.email === '' ||
+          this.empresa === '' ||
+          this.contrasenia === '' ||
+          this.repeatContrasenia === ''
+        "
+      >
+        <span v-if="!showSpinner">Registrarse</span>
+        <VueSpinner v-if="showSpinner" size="30" color="#fff" />
+      </button>
       <a href="#" class="text-decoration" v-if="showRegister" @click.prevent="showLoginForm"
         >Volver al inicio de sesión</a
       >
     </form>
 
+    <!-- RECUPERACION DE CONTRASEñA -->
     <div v-if="showForgotPassword" class="forgot-password-container">
       <h2>¿Olvidaste tu contraseña?</h2>
       <p>
@@ -71,16 +109,48 @@
       >
     </div>
   </div>
+
+  <vue-final-modal v-model="showInfoModal" classes="modal-container" content-class="modal-content">
+    <h3 class="modal-title">{{ modalTitle }}</h3>
+    <p>{{ modalInfo }}</p>
+
+    <div v-if="showRegister && !registerSuccesful" class="btn-actions-container">
+      <button class="btn btn-primary btn-modal" @click="toLoginModalAction()">
+        Iniciar sesión
+      </button>
+      <button class="btn btn-primary btn-modal" @click="toRegisterModalAction()">
+        Volver al registro
+      </button>
+    </div>
+
+    <div v-if="showRegister && registerSuccesful" class="btn-actions-container">
+      <button class="btn btn-primary btn-modal" @click="toStore()">
+        Ir a la tienda
+      </button>
+    </div>
+  </vue-final-modal>
+
+  <vue-final-modal v-model="showErrorModal" classes="modal-container" content-class="modal-content">
+    <h3 class="modal-title">{{ modalTitle }}</h3>
+    <p>{{ modalInfo }}</p>
+    <div class="btn-actions-container">
+      <button class="btn btn-primary btn-modal" @click="toRegisterModalAction()">
+        Volver
+      </button>
+    </div>
+  </vue-final-modal>
 </template>
 
 <script>
-import { useFirestore } from 'vuefire'
-import { collection, getDocs } from 'firebase/firestore'
-import { ref } from 'vue'
-// const db = useFirestore()
-// const users = ref([])
+import { collection, doc, getDocs, setDoc } from 'firebase/firestore'
+import { db } from '../firebase'
+import { VueSpinner } from 'vue3-spinners'
 
 export default {
+  components: {
+    VueSpinner
+  },
+  emits: ['hideLogin'],
   props: {
     showLogin: {
       type: Boolean,
@@ -89,39 +159,96 @@ export default {
   },
   data() {
     return {
-      username: '',
-      password: '',
+      users: [],
+      showSpinner: false,
+      showInfoModal: false,
+      showErrorModal: false,
+      modalInfo: '',
+      modalTitle: '',
       showRegister: false,
+      registerSuccesful: false,
       showForgotPassword: false,
       nombre: '',
       apellido: '',
       empresa: '',
-      email: ''
+      email: '',
+      contrasenia: '',
+      repeatContrasenia: ''
     }
   },
   methods: {
-    // async getUsers() {
-    //   let usersData = await getDocs(collection(db, 'usuarios'))
-    //   usersData.forEach((user) => {
-    //     console.log(user.data())
-    //     users.value.push(user.data())
-    //   })
-    // },
-    handleSubmit() {
-      // Agregar lógica de autenticación o registro aquí
-      console.log('Nombre de usuario:', this.username)
-      console.log('Contraseña:', this.password)
+    async getUsers() {
+      try {
+        let usersData = await getDocs(collection(db, 'usuarios'))
+        usersData.forEach((user) => {
+          this.users.push(user.data())
+        })
+        return this.users
+      } catch (error) {
+        console.log(error)
+        return error
+      }
+    },
+    async handleSubmit() {
+      try {
+        this.showSpinner = true;
+        const users = await this.getUsers()
+        const user = users.find(u => u.email === this.email)
+        this.showSpinner = false;
+        if (user){
+          if(user.contrasenia === this.contrasenia){
+            console.log("USUARIO LOGUEADO EXITOSAMENTE",user)
+          }else{
+            console.log("contrasenia incorrecta")
+          }
+        }else{
+          console.log("USUARIO NO EXISTE")
+        }
+        console.log("USER", user)
+      } catch (error) {
+        console.log(error)
+      }
     },
     showRegisterForm() {
       this.showRegister = true
-      this.$emit('hideLogin')
     },
-    handleRegister() {
-      // Agregar lógica de registro aquí
-      console.log('Nombre:', this.nombre)
-      console.log('Apellido:', this.apellido)
-      console.log('Empresa:', this.empresa)
-      console.log('Email:', this.email)
+    async handleRegister() {
+      this.showSpinner = true
+      const users = await this.getUsers()
+
+      if (users.some((u) => u.email === this.email)) {
+        this.showSpinner = false
+        this.modalTitle =
+          'El correo electrónico ingresado ya está vinculado a un usuario registrado'
+        this.modalInfo =
+          'Por favor, inicie sesión con este correo electrónico o regístrese con uno diferente.'
+        this.showInfoModal = true
+      } else {
+        try {
+          const newUserRef = doc(collection(db, 'usuarios'))
+          await setDoc(newUserRef, {
+            nombre: this.nombre,
+            apellido: this.apellido,
+            empresa: this.empresa,
+            email: this.email,
+            contrasenia: this.contrasenia,
+          })
+          this.showSpinner = false
+          this.registerSuccesful = true;
+          this.modalTitle = 'Registro exitoso!'
+          this.modalInfo = `Gracias por elegirnos ${this.nombre.charAt(0).toUpperCase() + this.nombre.slice(1)}! Ya puede realizar su pedido.`
+          this.showInfoModal = true
+        } catch (error) {
+          this.showSpinner = false
+          console.log(error)
+          this.modalTitle = 'Hubo un error!'
+          this.modalInfo = `Su usuario no fue registrado debido a un error inesperado. Por favor vuelva a intentarlo!`
+          this.showErrorModal = true
+        }
+      }
+    },
+    passwordValidator() {
+      return this.contrasenia === this.repeatContrasenia
     },
     showLoginForm() {
       this.showRegister = false
@@ -129,31 +256,82 @@ export default {
     },
     showForgotPasswordForm() {
       this.showForgotPassword = true
-    }
+    },
+    toLoginModalAction() {
+      this.nombre = ''
+      this.apellido = ''
+      this.empresa = ''
+      this.email = ''
+      this.showInfoModal = false
+      this.showLoginForm()
+    },
+    toRegisterModalAction() {
+      this.showInfoModal = false
+    },
+    toStore(){
+      this.showInfoModal = false
+      this.$emit('hideLogin')
+    },
   }
 }
 </script>
 
 <style scoped>
+.modal-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #007bff;
+  text-align: center;
+  margin-bottom: 0.5em;
+}
+:deep(.modal-content) {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5em 3em;
+  min-width: 40vw !important;
+  max-width: 400px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+}
 .login-container {
   max-width: 400px;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  max-height: 100vh;
 }
 
+.btn-actions-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1em;
+  /* width: 80%; */
+}
+.btn-modal {
+  margin: 0 1em;
+}
 .login-form {
   display: flex;
   flex-direction: column;
 }
 
 label {
-  margin-bottom: 8px;
+  margin-block: 8px;
+  padding-top: 8px;
 }
 
 input {
   padding: 8px;
+}
+
+.errorMsg {
+  color: red;
+  font-size: 0.8em;
 }
 
 button {
@@ -167,6 +345,9 @@ button {
 
 button:hover {
   background-color: hsl(7, 72%, 46%);
+}
+button:hover:disabled {
+  background-color: var(--orange-soda);
 }
 
 .login-links {

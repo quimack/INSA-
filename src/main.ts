@@ -4,21 +4,12 @@ import App from './App.vue';
 import router from './router';
 import { IonIcon } from '@ionic/vue';
 import { vfmPlugin } from 'vue-final-modal'
+import './assets/main.css'
 
 const app = createApp(App);
-import './assets/main.css'
-import {  firebaseApp } from './firebase'
-import { VueFire, VueFireAuth } from 'vuefire'
 
 app.use(router);
-app.use(VueFire, {
-    firebaseApp,
-    modules: [
-        // we will see other modules later on
-        VueFireAuth(),
-      ]
-})
 app.use(vfmPlugin)
-app.component('IonIcon', IonIcon); // Registrar IonIcon como componente global
+app.component('IonIcon', IonIcon)
 
 app.mount('#app')

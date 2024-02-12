@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       showLogin: false,
-      showOrderModal: false // Agregar estado para controlar la visibilidad del modal OrderModal
+      showOrderModal: false
     }
   },
   methods: {
@@ -24,7 +24,7 @@ export default {
       this.showLogin = !this.showLogin
     },
     handleOrderModal() {
-      this.showOrderModal = true // Mostrar el modal OrderModal cuando se recibe el evento
+      this.showOrderModal = true 
     }
   }
 }
@@ -35,8 +35,9 @@ export default {
     <NewHeader :showLogin="false" @openLogin="handleLogin" @openOrderModal="handleOrderModal" />
     <RouterView />
     <vue-final-modal v-model="showLogin" classes="modal-container" content-class="modal-content">
-      <LoginComponent :showLogin="true" />
+      <LoginComponent :showLogin="true" @hideLogin="handleLogin" />
     </vue-final-modal>
+    
     <vue-final-modal
       v-model="showOrderModal"
       classes="modal-container"
@@ -67,9 +68,5 @@ export default {
 .modal__title {
   font-size: 1.5rem;
   font-weight: 700;
-}
-.dark-mode div:deep(.modal-content) {
-  border-color: #2d3748;
-  background-color: #1a202c;
 }
 </style>

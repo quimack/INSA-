@@ -49,9 +49,6 @@ import { markRaw } from 'vue'
 export default markRaw({
   name: 'MyPagination',
   props: ['props'],
-  mounted() {
-    console.log(this.props)
-  },
 })
 </script>
 
