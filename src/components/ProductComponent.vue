@@ -8,12 +8,12 @@
         :class="{ 'default-img': !img }"
       />
     </header>
-    <main>
+    <main class="">
       <h3>{{ name }}</h3>
       <p class="detail">{{ description }}</p>
     </main>
     <footer class="price">
-      <div>$ {{ price }}</div>
+      <div style="padding: 10px;">$ {{ price }}</div>
       <div class="detail" v-if="uxpack">unidades x pack: {{ uxpack }}</div>
       <button @click="$emit('openLogin')" class="btn btn-primary">AGREGAR</button>
     </footer>
@@ -27,14 +27,30 @@ export default {
     return {
       showLogin: false
     }
-  },
+  }
 }
 </script>
 
 <style scoped>
+.btn {
+  position: relative;
+  background: var(--orange-soda);
+  color: var(--white);
+  font-family: var(--ff-poppins);
+  font-size: var(--fs-5);
+  text-transform: var(--text-transform, capitalize);
+  border: 1px solid var(--orange-soda);
+  padding: 10px 20px;
+  z-index: 1;
+  border-radius: 5px;
+}
+
+.btn:hover{
+  --orange-soda: hsl(7, 72%, 46%);
+}
 .card {
   width: 16em;
-  height: 22em;
+  height: 26em;
   border-radius: 16px;
   margin: 1.3em 1.3em 3em 1.3em;
   box-shadow: var(--shadow-1);
@@ -45,6 +61,7 @@ footer {
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 5em;
 }
 .img-container {
   height: 12em;

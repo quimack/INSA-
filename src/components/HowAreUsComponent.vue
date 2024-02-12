@@ -1,7 +1,6 @@
 <template>
   <section class="hero" id="home">
     <div class="container">
-      <!-- Contenido del héroe -->
       <div class="hero-content">
         <p class="hero-subtitle">
           <ion-icon name="hammer-outline"></ion-icon>

@@ -1,6 +1,6 @@
 <template>
   <header class="header" data-header>
-    <div class="overlay" data-overlay></div>
+    <div class="overlay" data-overlay @click="closeCart"></div>
 
     <div class="header-top">
       <div class="container-header">
@@ -78,15 +78,58 @@
             <span>Perfil</span>
           </button>
 
-          <button v-if="isStorePage" class="header-bottom-actions-btn" aria-label="Cart">
+          <button
+            v-if="isStorePage"
+            class="header-bottom-actions-btn"
+            aria-label="Cart"
+            @click="toggleCart"
+          >
             <ion-icon name="cart-outline"></ion-icon>
 
             <span>Tienda</span>
           </button>
-
-          <button class="header-bottom-actions-btn" data-nav-open-btn aria-label="Open Menu">
-            <ion-icon name="menu-outline"></ion-icon>
-          </button>
+          <!-- Contenido del carrito -->
+          <div  v-if="isCartOpen" class="cart-content active" ref="cartContent">
+            <h2>Carrito de Compras</h2>
+            <ul>
+              <li class="display-flex">
+                <span>ALIAFOR ADAP M14...</span>
+                <button @click="agregarProducto">
+                  <!-- Botón para agregar producto -->
+                  <ion-icon name="add-circle-outline"></ion-icon>
+                </button>
+                <button @click="eliminarProducto">
+                  <!-- Botón para eliminar producto -->
+                  <ion-icon name="trash-outline"></ion-icon>
+                </button>
+              </li>
+              <li class="display-flex">
+                <span>BALDE DE ALBAÑIL...</span>
+                <button @click="agregarProducto">
+                  <ion-icon name="add-circle-outline"></ion-icon>
+                </button>
+                <button @click="eliminarProducto">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </button>
+              </li>
+              <li class="display-flex">
+                <span>CARBORUNDUM RU...</span>
+                <button @click="agregarProducto">
+                  <ion-icon name="add-circle-outline"></ion-icon>
+                </button>
+                <button @click="eliminarProducto">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </button>
+              </li>
+            </ul>
+            <p class="padding">Total: <strong>$100.000</strong></p>
+            <button class="header-top-btn make-payment" @click="$emit('openOrderModal')">Realizar Pedidos</button>
+          </div>
+          <div>
+            <button class="header-bottom-actions-btn" data-nav-open-btn aria-label="Open Menu">
+              <ion-icon name="menu-outline"></ion-icon>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -99,10 +142,23 @@ import { RouterLink } from 'vue-router'
 export default {
   name: 'NewHeader',
   components: [RouterLink],
+  data() {
+    return {
+      isCartOpen: false // Agregar esta línea para definir la propiedad isCartOpen en los datos del componente
+    }
+  },
   computed: {
     isStorePage() {
       return this.$route.path === '/tienda'
     }
+  },
+  mounted() {
+    // Agregar un manejador de eventos para cerrar el carrito cuando se hace clic fuera de él
+    document.addEventListener('click', this.handleClickOutsideCart)
+  },
+  destroyed() {
+    // Eliminar el manejador de eventos cuando el componente se destruye para evitar fugas de memoria
+    document.removeEventListener('click', this.handleClickOutsideCart)
   },
   methods: {
     routeStore() {
@@ -110,12 +166,56 @@ export default {
     },
     routeHome() {
       this.$router.push('/')
+    },
+    toggleCart() {
+      setTimeout(()=>{
+        this.isCartOpen = !this.isCartOpen
+      })
+    },
+    closeCart() {
+      if (this.isCartOpen) {
+        this.isCartOpen = false
+      }
+    },
+    handleClickOutsideCart(event) {
+      // Verificar si el clic ocurrió fuera del carrito
+      const cartElement = this.$refs.cartContent
+      if (this.isCartOpen && cartElement && !cartElement.contains(event.target)) {
+        this.isCartOpen = false
+      }
     }
   }
 }
 </script>
 
 <style scoped>
+.make-payment {
+  width: 100%;
+  text-align: center;
+}
+.padding {
+  padding: 5px;
+}
+.display-flex {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+}
+.cart-content {
+  position: absolute;
+  top: 4em;
+  width: 25vw;
+  right: .6em;
+  background-color: #fff;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10; /* Asegura que el contenido del carrito esté por encima de otros elementos */
+  display: none; /* Oculta el contenido del carrito por defecto */
+}
+
+.cart-content.active {
+  display: block; /* Muestra el contenido del carrito cuando está activo */
+}
 .header {
   position: relative;
   z-index: 2;
@@ -284,7 +384,7 @@ a {
 
 .header-bottom-actions {
   background: var(--white);
-  position: fixed;
+  position: relative !important;
   bottom: 0;
   left: 0;
   width: 100%;

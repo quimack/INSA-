@@ -3,22 +3,28 @@ import { RouterView } from 'vue-router'
 import FooterComponent from '@/components/FooterComponent.vue'
 import NewHeader from './components/NewHeader.vue'
 import LoginComponent from '@/components/LoginComponent.vue'
+import OrderModal from './components/OrderModal.vue'
 
 export default {
   components: {
     NewHeader,
     RouterView,
     LoginComponent,
-    FooterComponent
+    FooterComponent,
+    OrderModal
   },
   data() {
     return {
-      showLogin: false
+      showLogin: false,
+      showOrderModal: false // Agregar estado para controlar la visibilidad del modal OrderModal
     }
   },
   methods: {
     handleLogin() {
       this.showLogin = !this.showLogin
+    },
+    handleOrderModal() {
+      this.showOrderModal = true // Mostrar el modal OrderModal cuando se recibe el evento
     }
   }
 }
@@ -26,10 +32,17 @@ export default {
 
 <template>
   <div>
-    <NewHeader :showLogin="false" @openLogin="handleLogin" />
-    <RouterView @openLogin="handleLogin" />
+    <NewHeader :showLogin="false" @openLogin="handleLogin" @openOrderModal="handleOrderModal" />
+    <RouterView />
     <vue-final-modal v-model="showLogin" classes="modal-container" content-class="modal-content">
       <LoginComponent :showLogin="true" />
+    </vue-final-modal>
+    <vue-final-modal
+      v-model="showOrderModal"
+      classes="modal-container"
+      content-class="modal-content"
+    >
+      <OrderModal :showOrderModal="true" />
     </vue-final-modal>
     <FooterComponent />
   </div>
@@ -45,7 +58,7 @@ export default {
   display: flex;
   flex-direction: column;
   margin: 0 1rem;
-  min-width: 28vw;
+  min-width: 20vw;
   max-width: 400px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
