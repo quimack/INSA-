@@ -41,6 +41,7 @@
           v-bind:key="index"
           :name="item.ART_DESCR"
           :price="item.ART_PREVT"
+          :code="item.ART_CODIG"
         />
       </div>
 
@@ -115,6 +116,8 @@ onMounted(async () => {
     })
     productsList.value.push(obj)
   })
+
+  productsList.value = formatData(productsList.value)
   productsList.value = productsList.value.sort((a, b) => {
     if (a.ART_DESCR > b.ART_DESCR) {
       return 1
@@ -128,6 +131,15 @@ onMounted(async () => {
   filteredProducts.value = JSON.parse(JSON.stringify(productsList.value))
   setPage(1)
 })
+
+function formatData(data) {
+  data.forEach(i => {
+    if (i.ART_PREVT) {
+      i.ART_PREVT = i.ART_PREVT.replace(/,/g, '');
+    }
+  });
+  return data;
+}
 
 // FILTER
 function setFilters() {
