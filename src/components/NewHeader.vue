@@ -89,31 +89,36 @@
             <span>Tienda</span>
           </button>
           <!-- Contenido del carrito -->
-          <div  v-if="isCartOpen" class="cart-content active" ref="cartContent">
-            <h2>Carrito de Compras</h2>
+          <div v-if="isCartOpen" class="cart-content active" ref="cartContent">
+            <h2 class="padding-title">Articulos Seleccionados</h2>
             <ul>
               <li class="display-flex">
-                <span>ALIAFOR ADAP M14...</span>
+                <div class="price-display">
+                  <span class="span-width">ALIAFOR ADAP M14 A MANDRIL HOLE NEXT **</span>
+                  <span class="price-width">$3.000</span>
+                </div>
+                <div class="burron-flex">
+                  <button @click="agregarProducto">
+                    <!-- Botón para agregar producto -->
+                    <ion-icon name="add-circle-outline"></ion-icon>
+                  </button>
+                  <button @click="eliminarProducto">
+                    <!-- Botón para eliminar producto -->
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </button>
+                </div>
+              </li>
+              <li class="display-flex">
+                <span class="span-width">ALIAFOR STONE FIRE T 9" ALMA PLANA**</span>
                 <button @click="agregarProducto">
-                  <!-- Botón para agregar producto -->
                   <ion-icon name="add-circle-outline"></ion-icon>
                 </button>
                 <button @click="eliminarProducto">
-                  <!-- Botón para eliminar producto -->
                   <ion-icon name="trash-outline"></ion-icon>
                 </button>
               </li>
               <li class="display-flex">
-                <span>BALDE DE ALBAÑIL...</span>
-                <button @click="agregarProducto">
-                  <ion-icon name="add-circle-outline"></ion-icon>
-                </button>
-                <button @click="eliminarProducto">
-                  <ion-icon name="trash-outline"></ion-icon>
-                </button>
-              </li>
-              <li class="display-flex">
-                <span>CARBORUNDUM RU...</span>
+                <span class="span-width">BASIC DISCO 115 X2,5 DEPRIMIDO</span>
                 <button @click="agregarProducto">
                   <ion-icon name="add-circle-outline"></ion-icon>
                 </button>
@@ -123,7 +128,11 @@
               </li>
             </ul>
             <p class="padding">Total: <strong>$100.000</strong></p>
-            <button class="header-top-btn make-payment" @click="$emit('openOrderModal')">Realizar Pedidos</button>
+            <div class="order-width">
+              <button class="header-top-btn make-payment" @click="$emit('openOrderModal')">
+                Realizar Pedidos
+              </button>
+            </div>
           </div>
           <div>
             <button class="header-bottom-actions-btn" data-nav-open-btn aria-label="Open Menu">
@@ -168,7 +177,7 @@ export default {
       this.$router.push('/')
     },
     toggleCart() {
-      setTimeout(()=>{
+      setTimeout(() => {
         this.isCartOpen = !this.isCartOpen
       })
     },
@@ -189,23 +198,48 @@ export default {
 </script>
 
 <style scoped>
-.make-payment {
+
+.padding-title{
+  padding-bottom: 15px;
+}
+
+.order-width{
   width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.burron-flex {
+  display: flex;
+}
+.price-display {
+  display: flex;
+  width: 100%;
+}
+.price-width {
+  width: 20%;
+}
+
+.span-width {
+  width: 100%;
+}
+.make-payment {
+  width: 30%;
   text-align: center;
 }
 .padding {
   padding: 5px;
+  text-align: right;
 }
 .display-flex {
   display: flex;
   justify-content: space-between;
-  padding: 5px;
+  padding: 5px 0px 15px 0px;
 }
 .cart-content {
   position: absolute;
   top: 4em;
-  width: 25vw;
-  right: .6em;
+  width: 30vw;
+  right: 0.6em;
   background-color: #fff;
   padding: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
