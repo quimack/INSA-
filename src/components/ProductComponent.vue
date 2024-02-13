@@ -13,9 +13,11 @@
       <p class="detail">{{ description }}</p>
     </main>
     <footer class="price">
-      <div style="padding: 10px;">$ {{ price }}</div>
+      <div style="padding: 10px">$ {{ price }}</div>
       <div class="detail" v-if="uxpack">unidades x pack: {{ uxpack }}</div>
-      <button @click=" isUserLogged() ? addProduct() : $emit('openLogin')" class="btn btn-primary">AGREGAR</button>
+      <button @click="isUserLogged() ? addProduct() : $emit('openLogin')" class="btn btn-primary">
+        AGREGAR
+      </button>
     </footer>
   </div>
 </template>
@@ -29,13 +31,25 @@ export default {
     }
   },
   methods: {
-    addProduct(){
-      // Agregar logica para agregar producto al carrito
-      console.log("ADD PRODUCT TO CART")
+    addProduct() {
+      const product = {
+        img: this.img,
+        name: this.name,
+        description: this.description,
+        price: this.price,
+        categorie: this.categorie,
+        subcategorie: this.subcategorie,
+        uxpack: this.uxpack
+      }
+      // Emite un evento con el producto agregado al carrito
+      this.$emit('add-to-cart', product)
+      // Imprime el producto agregado en la consola
+      console.log('Producto agregado al carrito:', product)
     },
-    isUserLogged(){
+
+    isUserLogged() {
       return !!localStorage.getItem('userLogged')
-    },
+    }
   }
 }
 </script>
@@ -54,7 +68,7 @@ export default {
   border-radius: 5px;
 }
 
-.btn:hover{
+.btn:hover {
   --orange-soda: hsl(7, 72%, 46%);
 }
 .card {
