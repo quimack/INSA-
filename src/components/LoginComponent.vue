@@ -11,6 +11,7 @@
 
       <label for="contrasenia">Contraseña:</label>
       <input type="password" id="contrasenia" v-model="contrasenia" required />
+      <div v-if="wrongPassword" class="errorMsg">Contraseña incorrecta</div>
 
       <button type="submit" class="login-button">
         <span v-if="!showSpinner">Iniciar Sesión</span>
@@ -124,9 +125,7 @@
     </div>
 
     <div v-if="showRegister && registerSuccesful" class="btn-actions-container">
-      <button class="btn btn-primary btn-modal" @click="toStore()">
-        Ir a la tienda
-      </button>
+      <button class="btn btn-primary btn-modal" @click="toStore()">Ir a la tienda</button>
     </div>
   </vue-final-modal>
 
@@ -134,9 +133,7 @@
     <h3 class="modal-title">{{ modalTitle }}</h3>
     <p>{{ modalInfo }}</p>
     <div class="btn-actions-container">
-      <button class="btn btn-primary btn-modal" @click="toRegisterModalAction()">
-        Volver
-      </button>
+      <button class="btn btn-primary btn-modal" @click="toRegisterModalAction()">Volver</button>
     </div>
   </vue-final-modal>
 </template>
@@ -145,6 +142,7 @@
 import { collection, doc, getDocs, setDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import { VueSpinner } from 'vue3-spinners'
+import { useUserStore } from '../states/userState'
 
 export default {
   components: {
@@ -163,6 +161,7 @@ export default {
       showSpinner: false,
       showInfoModal: false,
       showErrorModal: false,
+      wrongPassword: false,
       modalInfo: '',
       modalTitle: '',
       showRegister: false,
@@ -173,7 +172,8 @@ export default {
       empresa: '',
       email: '',
       contrasenia: '',
-      repeatContrasenia: ''
+      repeatContrasenia: '',
+      userStore: useUserStore()
     }
   },
   methods: {
@@ -191,22 +191,34 @@ export default {
     },
     async handleSubmit() {
       try {
-        this.showSpinner = true;
+        this.showSpinner = true
         const users = await this.getUsers()
-        const user = users.find(u => u.email === this.email)
-        this.showSpinner = false;
-        if (user){
-          if(user.contrasenia === this.contrasenia){
-            console.log("USUARIO LOGUEADO EXITOSAMENTE",user)
-          }else{
-            console.log("contrasenia incorrecta")
+        const user = users.find((u) => u.email === this.email)
+        this.showSpinner = false
+        if (user) {
+          if (user.contrasenia === this.contrasenia) {
+            const data = {
+              nombre: user.nombre,
+              apellido: user.apellido,
+              empresa: user.empresa,
+              email: user.email
+            }
+            localStorage.setItem('userLogged', JSON.stringify(data))
+            this.$emit('hideLogin')
+          } else {
+            this.wrongPassword = true;
           }
-        }else{
-          console.log("USUARIO NO EXISTE")
+        } else {
+          this.modalTitle = "Usuario no registrado"
+          this.modalInfo = "El correo electrónico con el que intenta ingresar no se encuentra registrado. Por favor, regístrese primero."
+          this.showErrorModal = true;
         }
-        console.log("USER", user)
       } catch (error) {
         console.log(error)
+        this.showSpinner = false
+        this.modalTitle = 'Hubo un error!'
+        this.modalInfo = `Su usuario no pudo iniciar sesión debido a un error inesperado. Por favor vuelva a intentarlo!`
+        this.showErrorModal = true
       }
     },
     showRegisterForm() {
@@ -231,10 +243,10 @@ export default {
             apellido: this.apellido,
             empresa: this.empresa,
             email: this.email,
-            contrasenia: this.contrasenia,
+            contrasenia: this.contrasenia
           })
           this.showSpinner = false
-          this.registerSuccesful = true;
+          this.registerSuccesful = true
           this.modalTitle = 'Registro exitoso!'
           this.modalInfo = `Gracias por elegirnos ${this.nombre.charAt(0).toUpperCase() + this.nombre.slice(1)}! Ya puede realizar su pedido.`
           this.showInfoModal = true
@@ -267,11 +279,15 @@ export default {
     },
     toRegisterModalAction() {
       this.showInfoModal = false
+      this.showErrorModal = false;
+      this.showRegister = true;
+      this.email = ''
+      this.contrasenia = '';
     },
-    toStore(){
+    toStore() {
       this.showInfoModal = false
       this.$emit('hideLogin')
-    },
+    }
   }
 }
 </script>

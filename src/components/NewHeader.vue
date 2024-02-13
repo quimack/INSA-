@@ -15,6 +15,7 @@
         </ul>
 
         <div class="wrapper">
+          <span v-if="userName || user?.nombre">Hola {{ userName ? userName : user?.nombre}}!</span>
           <ul class="header-top-social-list">
             <li>
               <a href="#" class="header-top-social-link">
@@ -147,25 +148,39 @@
 
 <script>
 import { RouterLink } from 'vue-router'
+import { useUserStore } from '@/states/userState'
+import { mapState } from 'pinia'
 
 export default {
   name: 'NewHeader',
   components: [RouterLink],
   data() {
     return {
-      isCartOpen: false // Agregar esta línea para definir la propiedad isCartOpen en los datos del componente
+      userStore: useUserStore(),
+      isCartOpen: false,
     }
   },
   computed: {
     isStorePage() {
       return this.$route.path === '/tienda'
+    },
+    user(){
+      let user = null;
+      if(localStorage.getItem('userLogged')){
+        user = JSON.parse(localStorage.getItem('userLogged'))
+      }
+      return user;
+    },
+    ...mapState(useUserStore, ['nombre']),
+    userName() {
+      return this.nombre.charAt(0).toUpperCase() + this.nombre.slice(1)
     }
   },
   mounted() {
     // Agregar un manejador de eventos para cerrar el carrito cuando se hace clic fuera de él
     document.addEventListener('click', this.handleClickOutsideCart)
   },
-  destroyed() {
+  unmounted() {
     // Eliminar el manejador de eventos cuando el componente se destruye para evitar fugas de memoria
     document.removeEventListener('click', this.handleClickOutsideCart)
   },
@@ -278,6 +293,7 @@ export default {
 
 .container-header {
   padding-inline: 15px;
+  color: #fff;
 }
 
 .header-top-list {
