@@ -15,7 +15,9 @@
         </ul>
 
         <div class="wrapper">
-          <span v-if="userName || user?.nombre">Hola {{ userName ? userName : user?.nombre}}!</span>
+          <span v-if="userName || user?.nombre"
+            >Hola {{ userName ? userName : user?.nombre }}!</span
+          >
           <ul class="header-top-social-list">
             <li>
               <a href="#" class="header-top-social-link">
@@ -157,22 +159,23 @@ export default {
   data() {
     return {
       userStore: useUserStore(),
-      isCartOpen: false,
+      isCartOpen: false
     }
   },
   computed: {
     isStorePage() {
       return this.$route.path === '/tienda'
     },
-    user(){
-      let user = null;
-      if(localStorage.getItem('userLogged')){
+    user() {
+      let user = null
+      if (localStorage.getItem('userLogged')) {
         user = JSON.parse(localStorage.getItem('userLogged'))
       }
-      return user;
+      return user
     },
     ...mapState(useUserStore, ['nombre']),
     userName() {
+      console.log(this.nombre)
       return this.nombre.charAt(0).toUpperCase() + this.nombre.slice(1)
     }
   },
@@ -213,12 +216,11 @@ export default {
 </script>
 
 <style scoped>
-
-.padding-title{
+.padding-title {
   padding-bottom: 15px;
 }
 
-.order-width{
+.order-width {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -251,9 +253,10 @@ export default {
   padding: 5px 0px 15px 0px;
 }
 .cart-content {
+  color: #000;
   position: absolute;
   top: 4em;
-  width: 30vw;
+  width: 38vw;
   right: 0.6em;
   background-color: #fff;
   padding: 10px;
