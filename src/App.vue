@@ -33,7 +33,7 @@ export default {
 <template>
   <div>
     <NewHeader :showLogin="false" @openLogin="handleLogin" @openOrderModal="handleOrderModal" />
-    <RouterView />
+    <RouterView  @openLogin="handleLogin"/>
     <vue-final-modal v-model="showLogin" classes="modal-container" content-class="modal-content">
       <LoginComponent :showLogin="true" @hideLogin="handleLogin" />
     </vue-final-modal>

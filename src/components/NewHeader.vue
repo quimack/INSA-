@@ -15,6 +15,7 @@
         </ul>
 
         <div class="wrapper">
+          <span v-if="userName || user?.nombre">Hola {{ userName ? userName : user?.nombre}}!</span>
           <ul class="header-top-social-list">
             <li>
               <a href="#" class="header-top-social-link">
@@ -89,7 +90,7 @@
             <span>Tienda</span>
           </button>
           <!-- Contenido del carrito -->
-          <div  v-if="isCartOpen" class="cart-content active" ref="cartContent">
+          <div v-if="isCartOpen" class="cart-content active" ref="cartContent">
             <h2>Carrito de Compras</h2>
             <ul>
               <li class="display-flex">
@@ -123,7 +124,9 @@
               </li>
             </ul>
             <p class="padding">Total: <strong>$100.000</strong></p>
-            <button class="header-top-btn make-payment" @click="$emit('openOrderModal')">Realizar Pedidos</button>
+            <button class="header-top-btn make-payment" @click="$emit('openOrderModal')">
+              Realizar Pedidos
+            </button>
           </div>
           <div>
             <button class="header-bottom-actions-btn" data-nav-open-btn aria-label="Open Menu">
@@ -138,25 +141,39 @@
 
 <script>
 import { RouterLink } from 'vue-router'
+import { useUserStore } from '@/states/userState'
+import { mapState } from 'pinia'
 
 export default {
   name: 'NewHeader',
   components: [RouterLink],
   data() {
     return {
-      isCartOpen: false // Agregar esta línea para definir la propiedad isCartOpen en los datos del componente
+      userStore: useUserStore(),
+      isCartOpen: false,
     }
   },
   computed: {
     isStorePage() {
       return this.$route.path === '/tienda'
+    },
+    user(){
+      let user = null;
+      if(localStorage.getItem('userLogged')){
+        user = JSON.parse(localStorage.getItem('userLogged'))
+      }
+      return user;
+    },
+    ...mapState(useUserStore, ['nombre']),
+    userName() {
+      return this.nombre.charAt(0).toUpperCase() + this.nombre.slice(1)
     }
   },
   mounted() {
     // Agregar un manejador de eventos para cerrar el carrito cuando se hace clic fuera de él
     document.addEventListener('click', this.handleClickOutsideCart)
   },
-  destroyed() {
+  unmounted() {
     // Eliminar el manejador de eventos cuando el componente se destruye para evitar fugas de memoria
     document.removeEventListener('click', this.handleClickOutsideCart)
   },
@@ -168,7 +185,7 @@ export default {
       this.$router.push('/')
     },
     toggleCart() {
-      setTimeout(()=>{
+      setTimeout(() => {
         this.isCartOpen = !this.isCartOpen
       })
     },
@@ -205,7 +222,7 @@ export default {
   position: absolute;
   top: 4em;
   width: 25vw;
-  right: .6em;
+  right: 0.6em;
   background-color: #fff;
   padding: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -244,6 +261,7 @@ export default {
 
 .container-header {
   padding-inline: 15px;
+  color: #fff;
 }
 
 .header-top-list {

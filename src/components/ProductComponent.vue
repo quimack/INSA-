@@ -15,7 +15,7 @@
     <footer class="price">
       <div style="padding: 10px;">$ {{ price }}</div>
       <div class="detail" v-if="uxpack">unidades x pack: {{ uxpack }}</div>
-      <button @click="$emit('openLogin')" class="btn btn-primary">AGREGAR</button>
+      <button @click=" isUserLogged() ? addProduct() : $emit('openLogin')" class="btn btn-primary">AGREGAR</button>
     </footer>
   </div>
 </template>
@@ -27,6 +27,15 @@ export default {
     return {
       showLogin: false
     }
+  },
+  methods: {
+    addProduct(){
+      // Agregar logica para agregar producto al carrito
+      console.log("ADD PRODUCT TO CART")
+    },
+    isUserLogged(){
+      return !!localStorage.getItem('userLogged')
+    },
   }
 }
 </script>
