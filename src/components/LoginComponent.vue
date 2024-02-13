@@ -203,6 +203,7 @@ export default {
               empresa: user.empresa,
               email: user.email
             }
+            this.userStore.setUser(data)
             localStorage.setItem('userLogged', JSON.stringify(data))
             this.$emit('hideLogin')
           } else {
