@@ -142,7 +142,7 @@
 import { collection, doc, getDocs, setDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import { VueSpinner } from 'vue3-spinners'
-import { useUserStore } from '../states/userState'
+import { useUserStore } from '../stores/userState'
 
 export default {
   components: {

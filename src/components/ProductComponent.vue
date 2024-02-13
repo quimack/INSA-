@@ -10,37 +10,79 @@
     </header>
     <main class="">
       <h3>{{ name }}</h3>
-      <p class="detail">{{ description }}</p>
+      <!-- <p class="detail">{{ description }}</p> -->
     </main>
     <footer class="price">
       <div style="padding: 10px;">$ {{ price }}</div>
-      <div class="detail" v-if="uxpack">unidades x pack: {{ uxpack }}</div>
-      <button @click=" isUserLogged() ? addProduct() : $emit('openLogin')" class="btn btn-primary">AGREGAR</button>
+      <!-- <div class="detail" v-if="uxpack">unidades x pack: {{ uxpack }}</div> -->
+      
+      <div class="btn-actions">
+        <button @click=" isUserLogged() ? addProduct() : $emit('openLogin')" class="btn btn-primary">
+          <span v-if="!isProductAdded()">AGREGAR</span>
+          <span v-if="isProductAdded()">+</span>
+        </button>
+        
+        <button v-if="isUserLogged && isProductAdded()" @click="subtractProduct()" class="btn btn-primary">
+          <span v-if="isProductAdded()">-</span>
+        </button>
+      </div>
+
+      <div class="detail" v-if="isProductAdded()">Cantidad: {{ getQuantity() }}</div>
     </footer>
   </div>
 </template>
 
 <script>
+import { useOrderStore } from '@/stores/orderState'
+
 export default {
-  props: ['img', 'name', 'description', 'price', 'categorie', 'subcategorie', 'uxpack'],
+  props: ['img', 'code', 'name', 'description', 'price', 'categorie', 'subcategorie', 'uxpack'],
   data() {
     return {
-      showLogin: false
+      showLogin: false,
+      orderStore: useOrderStore(),
     }
   },
   methods: {
-    addProduct(){
-      // Agregar logica para agregar producto al carrito
-      console.log("ADD PRODUCT TO CART")
-    },
     isUserLogged(){
       return !!localStorage.getItem('userLogged')
     },
+    isProductAdded(){
+      return !!this.orderStore.$state.products.some(p => p.art_code === this.code)
+    },
+    addProduct(){
+      this.orderStore.addProduct({
+        name: this.name,
+        code: this.code,
+        price: this.price
+      })
+    },
+    subtractProduct(){
+      let product = {}
+      if(this.orderStore.$state.products.some(p => p.art_code === this.code)){
+        product = this.orderStore.$state.products.find(p => p.art_code === this.code)
+        if(product.quantity > 1){
+          this.orderStore.subtractProduct(this.code)
+        }else{
+          this.orderStore.deleteProduct(this.code)
+        }
+      }else{
+        this.orderStore.deleteProduct(this.code)
+      }
+    },
+    getQuantity(){
+      return this.orderStore.products.find(p=> p.art_code === this.code).quantity
+    }
   }
 }
 </script>
 
 <style scoped>
+
+.btn-actions{
+  display: flex;
+  justify-content: space-around;
+}
 .btn {
   position: relative;
   background: var(--orange-soda);
@@ -52,6 +94,7 @@ export default {
   padding: 10px 20px;
   z-index: 1;
   border-radius: 5px;
+  margin: .3em 1em .7em 1em;
 }
 
 .btn:hover{

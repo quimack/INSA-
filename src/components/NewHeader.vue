@@ -91,49 +91,38 @@
 
             <span>Tienda</span>
           </button>
+
           <!-- Contenido del carrito -->
           <div v-if="isCartOpen" class="cart-content active" ref="cartContent">
             <h2 class="padding-title">Articulos Seleccionados</h2>
-            <ul>
+            <ul v-for="(product, index) in orderStore.products" v-bind:key="index">
               <li class="display-flex">
                 <div class="price-display">
-                  <span class="span-width">ALIAFOR ADAP M14 A MANDRIL HOLE NEXT **</span>
-                  <span class="price-width">$3.000</span>
+                  <span style="margin-right: .8em;">{{ product.quantity }}</span>
+                  <span class="span-width">{{ product.name }}</span>
+                  <span class="price-width">$ {{ product.price }}</span>
                 </div>
                 <div class="burron-flex">
-                  <button @click="agregarProducto">
+                  <button @click="addProduct(product)">
                     <!-- Botón para agregar producto -->
                     <ion-icon name="add-circle-outline"></ion-icon>
                   </button>
-                  <button @click="eliminarProducto">
+                  <button v-if="product.quantity > 1" @click="subtractProduct(product)">
+                    <!-- Botón para restar producto -->
+                    <ion-icon name="remove-circle-outline"></ion-icon>
+                  </button>
+                  <button @click="deleteProduct(product)">
                     <!-- Botón para eliminar producto -->
                     <ion-icon name="trash-outline"></ion-icon>
                   </button>
                 </div>
               </li>
-              <li class="display-flex">
-                <span class="span-width">ALIAFOR STONE FIRE T 9" ALMA PLANA**</span>
-                <button @click="agregarProducto">
-                  <ion-icon name="add-circle-outline"></ion-icon>
-                </button>
-                <button @click="eliminarProducto">
-                  <ion-icon name="trash-outline"></ion-icon>
-                </button>
-              </li>
-              <li class="display-flex">
-                <span class="span-width">BASIC DISCO 115 X2,5 DEPRIMIDO</span>
-                <button @click="agregarProducto">
-                  <ion-icon name="add-circle-outline"></ion-icon>
-                </button>
-                <button @click="eliminarProducto">
-                  <ion-icon name="trash-outline"></ion-icon>
-                </button>
-              </li>
             </ul>
-            <p class="padding">Total: <strong>$100.000</strong></p>
+
+            <p class="padding">Total: <strong>$ {{ orderStore.totalPrice }}</strong></p>
             <div class="order-width">
               <button class="header-top-btn make-payment" @click="$emit('openOrderModal')">
-                Realizar Pedidos
+                Realizar Pedido
               </button>
             </div>
           </div>
@@ -150,7 +139,8 @@
 
 <script>
 import { RouterLink } from 'vue-router'
-import { useUserStore } from '@/states/userState'
+import { useUserStore } from '@/stores/userState'
+import { useOrderStore } from '@/stores/orderState'
 import { mapState } from 'pinia'
 
 export default {
@@ -158,8 +148,9 @@ export default {
   components: [RouterLink],
   data() {
     return {
+      isCartOpen: false,
       userStore: useUserStore(),
-      isCartOpen: false
+      orderStore: useOrderStore(),
     }
   },
   computed: {
@@ -176,8 +167,8 @@ export default {
     ...mapState(useUserStore, ['nombre']),
     userName() {
       console.log(this.nombre)
-      return this.nombre.charAt(0).toUpperCase() + this.nombre.slice(1)
-    }
+      return this.nombre.charAt(0).toUpperCase() + this.nombre.slice(1);
+    },
   },
   mounted() {
     // Agregar un manejador de eventos para cerrar el carrito cuando se hace clic fuera de él
@@ -210,7 +201,20 @@ export default {
       if (this.isCartOpen && cartElement && !cartElement.contains(event.target)) {
         this.isCartOpen = false
       }
-    }
+    },
+    subtractProduct(product){
+      this.orderStore.subtractProduct(product.art_code)
+    },
+    addProduct(product){
+      this.orderStore.addProduct({
+        name: product.name,
+        code: product.art_code,
+        price: product.price
+      })
+    },
+    deleteProduct(product){
+      this.orderStore.deleteProduct(product.art_code)
+    },
   }
 }
 </script>
@@ -235,7 +239,6 @@ export default {
 .price-width {
   width: 20%;
 }
-
 .span-width {
   width: 100%;
 }
@@ -256,7 +259,7 @@ export default {
   color: #000;
   position: absolute;
   top: 4em;
-  width: 38vw;
+  width: 48vw;
   right: 0.6em;
   background-color: #fff;
   padding: 10px;
