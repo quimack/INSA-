@@ -251,9 +251,10 @@ export default {
   padding: 5px 0px 15px 0px;
 }
 .cart-content {
+  color: #000;
   position: absolute;
   top: 4em;
-  width: 30vw;
+  width: 38vw;
   right: 0.6em;
   background-color: #fff;
   padding: 10px;
