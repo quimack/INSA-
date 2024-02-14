@@ -20,5 +20,10 @@ export const useUserStore = defineStore('user', {
       this.empresa= ''
       this.email= ''
     },
+    isUserLogged(){
+
+     return !!JSON.parse(localStorage.getItem('userLogged')) 
+      
+    }
   }
 })

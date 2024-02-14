@@ -64,6 +64,7 @@
             @click="routeHome"
             class="header-bottom-actions-btn"
             aria-label="Home"
+            title="Ir al Inicio"
           >
             <ion-icon name="home-outline"></ion-icon>
 
@@ -71,10 +72,11 @@
           </button>
 
           <button
-            v-if="isStorePage"
+            v-if="isStorePage && !userStore.isUserLogged()"
             @click="$emit('openLogin')"
             class="header-bottom-actions-btn"
             aria-label="Profile"
+            title="Iniciar Sesión"
           >
             <ion-icon name="person-outline"></ion-icon>
 
@@ -82,10 +84,22 @@
           </button>
 
           <button
+            v-if="isStorePage && userStore.isUserLogged()"
+            class="header-bottom-actions-btn"
+            aria-label="Logout"
+            @click="logOut"
+            title="Cerrar Sesión"
+          >
+            <ion-icon name="log-out-outline"></ion-icon>
+            <span>Cerrar sesión</span>
+          </button>
+
+          <button
             v-if="isStorePage"
             class="header-bottom-actions-btn"
             aria-label="Cart"
             @click="toggleCart"
+            title="Ver Mi Pedido"
           >
             <ion-icon name="cart-outline"></ion-icon>
 
@@ -98,7 +112,7 @@
             <ul v-for="(product, index) in orderStore.products" v-bind:key="index">
               <li class="display-flex">
                 <div class="price-display">
-                  <span style="margin-right: .8em;">{{ product.quantity }}</span>
+                  <span style="margin-right: 0.8em">{{ product.quantity }}</span>
                   <span class="span-width">{{ product.name }}</span>
                   <span class="price-width">$ {{ product.price }}</span>
                 </div>
@@ -119,7 +133,9 @@
               </li>
             </ul>
 
-            <p class="padding">Total: <strong>$ {{ orderStore.totalPrice }}</strong></p>
+            <p class="padding">
+              Total: <strong>$ {{ orderStore.totalPrice }}</strong>
+            </p>
             <div class="order-width">
               <button class="header-top-btn make-payment" @click="$emit('openOrderModal')">
                 Realizar Pedido
@@ -133,7 +149,6 @@
           </div>
         </div>
       </div>
-      <button class="btn btn-primary" @click="logOut">Soy el botón de tu vida</button>
     </div>
   </header>
 </template>
@@ -143,6 +158,7 @@ import { RouterLink } from 'vue-router'
 import { useUserStore } from '@/stores/userState'
 import { useOrderStore } from '@/stores/orderState'
 import { mapState } from 'pinia'
+
 
 export default {
   name: 'NewHeader',
@@ -168,8 +184,8 @@ export default {
     ...mapState(useUserStore, ['nombre']),
     userName() {
       console.log(this.nombre)
-      return this.nombre.charAt(0).toUpperCase() + this.nombre.slice(1);
-    },
+      return this.nombre.charAt(0).toUpperCase() + this.nombre.slice(1)
+    }
   },
   mounted() {
     // Agregar un manejador de eventos para cerrar el carrito cuando se hace clic fuera de él
@@ -203,24 +219,26 @@ export default {
         this.isCartOpen = false
       }
     },
-    subtractProduct(product){
+    subtractProduct(product) {
       this.orderStore.subtractProduct(product.art_code)
     },
-    addProduct(product){
+    addProduct(product) {
       this.orderStore.addProduct({
         name: product.name,
         code: product.art_code,
         price: product.price
       })
     },
-    deleteProduct(product){
+    deleteProduct(product) {
       this.orderStore.deleteProduct(product.art_code)
     },
-    logOut(){
+    logOut() {
       localStorage.removeItem('userLogged')
       this.userStore.reset()
       this.orderStore.reset()
-    }
+      this.isLoggedIn = false // Actualizar el estado de inicio de sesión al cerrar sesión
+      this.$router.push('/')
+    },
   }
 }
 </script>

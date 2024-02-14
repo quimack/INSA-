@@ -17,12 +17,13 @@
           <div class="width-100">
             <ul class="contact-list">
               <li>
-                <a href="#" class="contact-link">
+                <a href="https://maps.app.goo.gl/t7E4hnodawouZH6C6" target="blanc" class="contact-link">
+
                   <ion-icon name="location-outline"></ion-icon>
 
-                  <address>
+                  <span>
                     Av. Sta María 2200. Rincón de Milberg. Tigre, Buenos Aires
-                  </address>
+                  </span>
                 </a>
               </li>
 
@@ -30,7 +31,7 @@
                 <a href="https://api.whatsapp.com/send?phone=5491123456789" class="contact-link">
                   <ion-icon name="call-outline"></ion-icon>
 
-                  <span>1560961726</span>
+                  <span>15-6096-1726</span>
                 </a>
               </li>
 
@@ -63,7 +64,7 @@
 
     <div class="footer-bottom">
       <div class="container">
-        <p class="copyright">&copy; 2024 <a href="#">vortex</a>. All Rights Reserved</p>
+        <p class="copyright">&copy; 2024 <a href="#">bug</a>. All Rights Reserved</p>
       </div>
     </div>
   </footer>
