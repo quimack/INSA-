@@ -105,7 +105,8 @@
 
             <span>Tienda</span>
           </button>
-<!-- probando un cambio -->
+
+
           <!-- Contenido del carrito -->
           <div v-if="isCartOpen" class="cart-content active" ref="cartContent">
             <h2 class="padding-title">Articulos Seleccionados</h2>
