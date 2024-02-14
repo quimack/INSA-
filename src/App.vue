@@ -41,7 +41,7 @@ export default {
     <vue-final-modal
       v-model="showOrderModal"
       classes="modal-container"
-      content-class="modal-content"
+      content-class="modal-content large"
     >
       <OrderModal :showOrderModal="true" />
     </vue-final-modal>
@@ -64,6 +64,10 @@ export default {
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   background: #fff;
+}
+
+:deep(.large){
+  max-width: inherit;
 }
 .modal__title {
   font-size: 1.5rem;
