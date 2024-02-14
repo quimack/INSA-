@@ -25,7 +25,11 @@
       </div>
     </aside>
 
-    <main class="main-container">
+    <div class="spinner-container" v-if="showSpinner">
+      <VueSpinner size="100" color="#0b2c3c" />
+    </div>
+
+    <main class="main-container" v-if="!showSpinner">
       <input
         @input="setFilters()"
         class="search"
@@ -61,12 +65,14 @@ import Pagination from 'v-pagination-3'
 import { onMounted, ref } from 'vue'
 import MyPagination from '@/components/MyPagination.vue'
 import axios from 'axios'
+import { VueSpinner } from 'vue3-spinners'
 
 const emit = defineEmits(['openLogin'])
 function openLogin() {
   emit('openLogin')
 }
 
+let showSpinner = ref(true)
 let productsList = ref([])
 let filteredProducts = ref([])
 
@@ -87,47 +93,54 @@ const apiKey = import.meta.env.VITE_API_KEY
 
 onMounted(async () => {
   // GET GOOGLE SHEETS DATA:
-  let sheetData = await axios({
-    method: 'get',
-    url: `${sheetsApi}/v4/spreadsheets/${spreadsheetId}`,
-    params: {
-      key: apiKey
-    }
-  })
-  let endRange = sheetData.data.sheets[0].properties.gridProperties.rowCount
-  let range = `A1:C${Number(endRange) - 3}`
-  let sheetValues = await axios({
-    method: 'get',
-    url: `${sheetsApi}/v4/spreadsheets/${spreadsheetId}/values/${range}`,
-    params: {
-      key: apiKey
-    }
-  })
-  let keys = []
-  sheetValues.data.values.forEach((row, i) => {
-    let obj = {}
-    row.forEach((cell, index) => {
-      if (i === 0) keys.push(cell)
-      if (index === 0) obj[keys[0]] = cell
-      if (index === 1) obj[keys[1]] = cell
-      if (index === 2) obj[keys[2]] = cell
-      if (index === 3) obj[keys[3]] = cell
+  try {
+    let sheetData = await axios({
+      method: 'get',
+      url: `${sheetsApi}/v4/spreadsheets/${spreadsheetId}`,
+      params: {
+        key: apiKey
+      }
     })
-    productsList.value.push(obj)
-  })
-  productsList.value = formatData(productsList.value)
-  productsList.value = productsList.value.filter(p => {
-    const value = Number(p.ART_PREVT);
-    return !Number.isNaN(value);
-  })
+    let endRange = sheetData.data.sheets[0].properties.gridProperties.rowCount
+    let range = `A1:C${Number(endRange) - 3}`
+    let sheetValues = await axios({
+      method: 'get',
+      url: `${sheetsApi}/v4/spreadsheets/${spreadsheetId}/values/${range}`,
+      params: {
+        key: apiKey
+      }
+    })
+    let keys = []
+    sheetValues.data.values.forEach((row, i) => {
+      let obj = {}
+      row.forEach((cell, index) => {
+        if (i === 0) keys.push(cell)
+        if (index === 0) obj[keys[0]] = cell
+        if (index === 1) obj[keys[1]] = cell
+        if (index === 2) obj[keys[2]] = cell
+        if (index === 3) obj[keys[3]] = cell
+      })
+      productsList.value.push(obj)
+    })
+    productsList.value = formatData(productsList.value)
+    productsList.value = productsList.value.filter((p) => {
+      const value = Number(p.ART_PREVT)
+      return !Number.isNaN(value)
+    })
 
-  productsList.value = orderList(productsList.value)
+    productsList.value = orderList(productsList.value)
 
-  filteredProducts.value = JSON.parse(JSON.stringify(productsList.value))
-  setPage(1)
+    filteredProducts.value = JSON.parse(JSON.stringify(productsList.value))
+    setPage(1)
+
+    showSpinner.value = false
+  } catch (error) {
+    console.log(error)
+    showSpinner.value = false
+  }
 })
 
-function orderList(data){
+function orderList(data) {
   return data.sort((a, b) => {
     if (a.ART_DESCR > b.ART_DESCR) {
       return 1
@@ -298,6 +311,13 @@ function showSubCategories(index, i) {
 </script>
 
 <style scoped>
+.spinner-container {
+  width: 100%;
+  margin-top: -150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .wrapper {
   display: flex;
   width: 100%;
