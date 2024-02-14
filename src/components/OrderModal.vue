@@ -1,43 +1,25 @@
 <template>
   <div v-if="showOrderModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content scroll-y">
       <h2>Resumen de la compra</h2>
       <div class="order-header">
         <div class="order-column">Categoría</div>
-        <div class="order-column">Producto</div>
-        <div class="order-column">Precio</div>
-        <div class="order-column">Cantidad</div>
-        <div class="order-column"></div>
+        <div class="order-column flex-2">Producto</div>
+        <div class="order-column flex-half">Precio</div>
+        <div class="order-column flex-half">Cantidad</div>
       </div>
-      <div class="order-item">
+      <div class="order-item" v-for="(product, index) in orderStore.products" v-bind:key="index">
         <div class="order-column">
           <img src="../assets/images/imagen1.jpg" alt="Categoría" class="category-icon" />
         </div>
-        <div class="order-column">ALIAFOR ADAP M14 A MANDRIL HOLE NEXT **</div>
-        <div class="order-column">$10</div>
-        <div class="order-column">2</div>
-        <div class="order-column">
-          <div class="display-flex">
-            <ion-icon name="remove-circle-outline" class="remove-icon"></ion-icon>
-            <ion-icon name="add-circle-outline" class="add-icon"></ion-icon>
-          </div>
-        </div>
+        <div class="order-column flex-2">{{ product.name }}</div>
+        <div class="order-column flex-half">$ {{ product.price }}</div>
+        <div class="order-column flex-half">{{ product.quantity }}</div>
       </div>
-      <div class="order-item">
-        <div class="order-column">
-          <img src="../assets/images/imagen1.jpg" alt="Categoría" class="category-icon" />
-        </div>
-        <div class="order-column">ALIAFOR STONE FIRE T 9" ALMA PLANA**</div>
-        <div class="order-column">$15</div>
-        <div class="order-column">1</div>
-        <div class="order-column">
-          <div class="display-flex">
-            <ion-icon name="remove-circle-outline" class="remove-icon"></ion-icon>
-            <ion-icon name="add-circle-outline" class="add-icon"></ion-icon>
-          </div>
-        </div>
+
+      <div class="total">
+        <strong>Total: $ {{ orderStore.totalPrice }}</strong>
       </div>
-      <div class="total"><strong>Total: $300.500</strong></div>
       <div class="confirm-container">
         <button class="confirm-button" @click="confirmOrder">Confirmar Pedido</button>
       </div>
@@ -46,6 +28,8 @@
 </template>
 
 <script>
+import { useOrderStore } from '@/stores/orderState'
+
 export default {
   name: 'OrderModal',
   props: {
@@ -58,66 +42,56 @@ export default {
       default: () => []
     }
   },
+  data() {
+    return {
+      orderStore: useOrderStore()
+    }
+  },
   methods: {
-    removeItem(index) {
-      this.orderItems.splice(index, 1)
-    },
-    addItem(index) {
-      // Aquí podrías implementar la lógica para agregar un producto, por ejemplo, duplicando el elemento actual o aumentando su cantidad.
-      // En esta versión de ejemplo, simplemente estoy duplicando el producto en la posición actual.
-      this.orderItems.splice(index + 1, 0, JSON.parse(JSON.stringify(this.orderItems[index])))
-    },
-    calculateTotal() {
-      return this.orderItems.reduce((total, item) => total + item.price * item.quantity, 0)
+    confirmOrder() {
+      const user = JSON.parse(localStorage.getItem('userLogged'))
+      this.orderStore.initOrder(user?.name)
+      console.log(this.orderStore.$state)
     }
   }
 }
 </script>
 
 <style scoped>
-.confirm-container {
-  display: flex;
-  width: 100%;
-  justify-content: center;
-}
-.confirm-button {
-  background-color: var(--orange-soda);
-  color: var(--white);
-  font-size: 1rem;
-  font-weight: var(--fw-700);
-  padding: 10px 15px;
-  text-align: center;
-}
-
-.confirm-button:hover{
-  --orange-soda: hsl(7, 72%, 46%);
-}
 .display-flex {
   display: flex;
 }
 .modal {
-  width: 100%;
-  height: 100%;
+  /* width: 100%; */
+  width: 78vw;
+  height: 94vh;
   z-index: 999;
   display: flex;
   justify-content: center;
   align-items: center;
+  
 }
 
 .modal-content {
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
-  width: 400px;
+  width: 100%;
   min-width: 60rem !important;
+  margin: 0 !important;
 }
 
+.modal-content.scroll-y{
+  max-width: 1600px !important;
+  overflow-y: auto;
+  max-height: 100%;
+}
 .order-header {
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid #ccc;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
+  padding-block: 20px;
+  /* margin-bottom: 10px; */
   font-weight: bold;
 }
 
@@ -136,7 +110,12 @@ export default {
   justify-content: center;
   align-items: center;
 }
-
+.flex-2{
+  flex: 2;
+}
+.flex-half{
+  flex: 0.5;
+}
 .order-column:first-child {
   flex: 1;
   text-align: center;
@@ -164,5 +143,23 @@ export default {
   font-size: 18px;
   margin-top: 20px;
   text-align: right;
+}
+
+.confirm-container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+.confirm-button {
+  background-color: var(--orange-soda);
+  color: var(--white);
+  font-size: 1rem;
+  font-weight: var(--fw-700);
+  padding: 10px 15px;
+  text-align: center;
+}
+
+.confirm-button:hover {
+  --orange-soda: hsl(7, 72%, 46%);
 }
 </style>

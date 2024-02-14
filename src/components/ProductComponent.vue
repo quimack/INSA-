@@ -9,11 +9,11 @@
       />
     </header>
     <main class="">
-      <h3>{{ name }}</h3>
+      <h4>{{ name }}</h4>
       <!-- <p class="detail">{{ description }}</p> -->
+      <div class="price">$ {{ price }}</div>
     </main>
-    <footer class="price">
-      <div style="padding: 10px;">$ {{ price }}</div>
+    <footer>
       <!-- <div class="detail" v-if="uxpack">unidades x pack: {{ uxpack }}</div> -->
       
       <div class="btn-actions">
@@ -78,6 +78,63 @@ export default {
 </script>
 
 <style scoped>
+.card {
+  /* width: 16em; */
+  /* height: 26em; */
+  width: 19vw;
+  height: 20em;
+  border-radius: 16px;
+  margin: 1.3em 1.3em 3em 1.3em;
+  box-shadow: var(--shadow-1);
+}
+
+main,
+footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 27%;
+}
+
+main{
+  justify-content: space-between;
+}
+
+footer{
+  justify-content: flex-start;
+  padding-top: .8em;
+}
+
+.img-container {
+  height: 46%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.img-product {
+  border-radius: 16px 16px 0 0;
+  max-height: 100%;
+}
+.default-img {
+  width: 6em;
+}
+h4 {
+  padding: 0.3em;
+  color: #023e8a;
+  text-align: center;
+}
+.price {
+  color: #097fff;
+  font-size: 1.3em;
+}
+.detail {
+  color: #656565;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 400;
+  padding-top: .5em
+}
 
 .btn-actions{
   display: flex;
@@ -94,56 +151,10 @@ export default {
   padding: 10px 20px;
   z-index: 1;
   border-radius: 5px;
-  margin: .3em 1em .7em 1em;
+  margin: 0 1em;
 }
 
 .btn:hover {
   --orange-soda: hsl(7, 72%, 46%);
-}
-.card {
-  width: 16em;
-  height: 26em;
-  border-radius: 16px;
-  margin: 1.3em 1.3em 3em 1.3em;
-  box-shadow: var(--shadow-1);
-}
-
-main,
-footer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 5em;
-}
-.img-container {
-  height: 12em;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.img-product {
-  border-radius: 16px 16px 0 0;
-  /* width: 5em; */
-  max-height: 12em;
-}
-.default-img {
-  width: 6em;
-}
-h3 {
-  padding: 0.3em;
-  color: #023e8a;
-  text-align: center;
-}
-.price {
-  color: #097fff;
-  font-size: 1.3em;
-  padding: 0.3em;
-}
-.detail {
-  color: #656565;
-  font-size: 14px;
-  text-align: center;
-  font-weight: 400;
 }
 </style>

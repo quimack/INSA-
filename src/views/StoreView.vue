@@ -31,8 +31,7 @@
         class="search"
         type="text"
         v-model="filters.search"
-        placeholder="Ingrese su búsqueda
-"
+        placeholder="Ingrese su búsqueda"
       />
       <div class="products-container">
         <ProductComponent
@@ -116,9 +115,20 @@ onMounted(async () => {
     })
     productsList.value.push(obj)
   })
-
   productsList.value = formatData(productsList.value)
-  productsList.value = productsList.value.sort((a, b) => {
+  productsList.value = productsList.value.filter(p => {
+    const value = Number(p.ART_PREVT);
+    return !Number.isNaN(value);
+  })
+
+  productsList.value = orderList(productsList.value)
+
+  filteredProducts.value = JSON.parse(JSON.stringify(productsList.value))
+  setPage(1)
+})
+
+function orderList(data){
+  return data.sort((a, b) => {
     if (a.ART_DESCR > b.ART_DESCR) {
       return 1
     }
@@ -127,26 +137,21 @@ onMounted(async () => {
     }
     return 0
   })
-
-  filteredProducts.value = JSON.parse(JSON.stringify(productsList.value))
-  setPage(1)
-})
-
+}
 function formatData(data) {
-  data.forEach(i => {
+  data.forEach((i) => {
     if (i.ART_PREVT) {
-      i.ART_PREVT = i.ART_PREVT.replace(/,/g, '');
+      i.ART_PREVT = i.ART_PREVT.replace(/,/g, '')
     }
-  });
-  return data;
+  })
+  return data
 }
 
 // FILTER
 function setFilters() {
   filteredProducts.value = productsList.value.filter((i) => {
     if (
-      (filters.value.search !== '' &&
-        i.ART_DESCR?.toLowerCase().includes(filters.value.search.toLowerCase())) ||
+      i.ART_DESCR?.toLowerCase().includes(filters.value.search.toLowerCase()) ||
       (filters.value.brand && filters.value.brand.toLowerCase() === i.ART_BRAND?.toLowerCase()) ||
       (filters.value.categorie &&
         filters.value.categorie.toLowerCase() === i.ART_CATEG?.toLowerCase())
