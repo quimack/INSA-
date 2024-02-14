@@ -106,43 +106,58 @@
             <span>Tienda</span>
           </button>
 
-
           <!-- Contenido del carrito -->
           <div v-if="isCartOpen" class="cart-content active" ref="cartContent">
-            <h2 class="padding-title">Articulos Seleccionados</h2>
-            <ul v-for="(product, index) in orderStore.products" v-bind:key="index">
-              <li class="display-flex">
-                <div class="price-display">
-                  <span style="margin-right: 0.8em">{{ product.quantity }}</span>
-                  <span class="span-width">{{ product.name }}</span>
-                  <span class="price-width">$ {{ product.price }}</span>
-                </div>
-                <div class="burron-flex">
-                  <button @click="addProduct(product)">
-                    <!-- Botón para agregar producto -->
-                    <ion-icon name="add-circle-outline"></ion-icon>
-                  </button>
-                  <button v-if="product.quantity > 1" @click="subtractProduct(product)">
-                    <!-- Botón para restar producto -->
-                    <ion-icon name="remove-circle-outline"></ion-icon>
-                  </button>
-                  <button @click="deleteProduct(product)">
-                    <!-- Botón para eliminar producto -->
-                    <ion-icon name="trash-outline"></ion-icon>
-                  </button>
-                </div>
-              </li>
-            </ul>
+            <h2 v-if="orderStore.products.length > 1" class="padding-title">
+              Artículos Seleccionados
+            </h2>
+            <h2 v-if="orderStore.products.length < 1" class="center padding-title">
+              No ha agregado ningún producto
+            </h2>
+            <div class="scroll-y">
+              <ul class="products-list">
+                <li
+                  class="display-flex"
+                  v-for="(product, index) in orderStore.products"
+                  v-bind:key="index"
+                >
+                  <div class="price-display">
+                    <span style="margin-right: 0.8em">{{ product.quantity }}</span>
+                    <span class="span-width">{{ product.name }}</span>
+                    <span class="price-width">$ {{ product.price }}</span>
+                  </div>
+                  <div class="burron-flex">
+                    <button @click="addProduct(product)">
+                      <!-- Botón para agregar producto -->
+                      <ion-icon name="add-circle-outline"></ion-icon>
+                    </button>
+                    <button v-if="product.quantity > 1" @click="subtractProduct(product)">
+                      <!-- Botón para restar producto -->
+                      <ion-icon name="remove-circle-outline"></ion-icon>
+                    </button>
+                    <button @click="deleteProduct(product)">
+                      <!-- Botón para eliminar producto -->
+                      <ion-icon name="trash-outline"></ion-icon>
+                    </button>
+                  </div>
+                </li>
+              </ul>
 
-            <p class="padding">
-              Total: <strong>$ {{ orderStore.totalPrice }}</strong>
-            </p>
-            <div class="order-width">
-              <button class="header-top-btn make-payment" @click="$emit('openOrderModal')">
-                Realizar Pedido
-              </button>
+              <p v-if="orderStore.products.length > 1" class="padding">
+                Total: <strong>$ {{ orderStore.totalPrice }}</strong>
+              </p>
+              <div class="order-width">
+                <button
+                  class="header-top-btn make-payment"
+                  :disabled="orderStore.products.length < 1"
+                  @click="$emit('openOrderModal')"
+                >
+                  Ver Resumen
+                </button>
+              </div>
             </div>
           </div>
+
           <div>
             <button class="header-bottom-actions-btn" data-nav-open-btn aria-label="Open Menu">
               <ion-icon name="menu-outline"></ion-icon>
@@ -160,7 +175,6 @@ import { useUserStore } from '@/stores/userState'
 import { useOrderStore } from '@/stores/orderState'
 import { mapState } from 'pinia'
 
-
 export default {
   name: 'NewHeader',
   components: [RouterLink],
@@ -168,7 +182,7 @@ export default {
     return {
       isCartOpen: false,
       userStore: useUserStore(),
-      orderStore: useOrderStore(),
+      orderStore: useOrderStore()
     }
   },
   computed: {
@@ -239,14 +253,15 @@ export default {
       this.orderStore.reset()
       this.isLoggedIn = false // Actualizar el estado de inicio de sesión al cerrar sesión
       this.$router.push('/')
-    },
+    }
   }
 }
 </script>
 
 <style scoped>
 .padding-title {
-  padding-bottom: 15px;
+  padding-bottom: 0.5em;
+  text-align: center;
 }
 
 .order-width {
@@ -272,7 +287,7 @@ export default {
   text-align: center;
 }
 .padding {
-  padding: 5px;
+  padding: 0.8em;
   text-align: right;
 }
 .display-flex {
@@ -281,6 +296,8 @@ export default {
   padding: 5px 0px 15px 0px;
 }
 .cart-content {
+  border: 1px solid #d6d6d66e;
+  border-radius: 12px;
   color: #000;
   position: absolute;
   top: 4em;
@@ -291,10 +308,22 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 10; /* Asegura que el contenido del carrito esté por encima de otros elementos */
   display: none; /* Oculta el contenido del carrito por defecto */
+  max-height: 42vh;
+  /* overflow-y: auto; */
+}
+
+.scroll-y {
+  max-height: calc(42vh - (1.5em + 25px) - 1em);
+  overflow-y: auto;
+  padding-bottom: 1em;
 }
 
 .cart-content.active {
   display: block; /* Muestra el contenido del carrito cuando está activo */
+}
+
+.products-list {
+  padding-right: 0.8em;
 }
 .header {
   position: relative;

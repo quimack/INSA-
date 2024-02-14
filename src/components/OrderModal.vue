@@ -3,14 +3,14 @@
     <div class="modal-content scroll-y">
       <h2>Resumen de la compra</h2>
       <div class="order-header">
-        <div class="order-column">Categoría</div>
+        <div class="order-column"></div>
         <div class="order-column flex-2">Producto</div>
         <div class="order-column flex-half">Precio</div>
         <div class="order-column flex-half">Cantidad</div>
       </div>
       <div class="order-item" v-for="(product, index) in orderStore.products" v-bind:key="index">
         <div class="order-column">
-          <img src="../assets/images/imagen1.jpg" alt="Categoría" class="category-icon" />
+          <img src="/img/no-img.png" alt="Categoría" class="category-icon"/>
         </div>
         <div class="order-column flex-2">{{ product.name }}</div>
         <div class="order-column flex-half">$ {{ product.price }}</div>
@@ -122,8 +122,8 @@ export default {
 }
 
 .category-icon {
-  width: 5rem;
-  height: 5rem;
+  width: 4rem;
+  height: 4rem;
   border-radius: 0.4rem;
 }
 
