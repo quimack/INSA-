@@ -14,5 +14,11 @@ export const useUserStore = defineStore('user', {
       this.empresa = user.empresa
       this.email = user.email
     },
+    reset() {
+      this.nombre= ''
+      this.apellido= ''
+      this.empresa= ''
+      this.email= ''
+    },
   }
 })

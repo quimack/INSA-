@@ -26,6 +26,12 @@ export const useOrderStore = defineStore('order', {
       this.fecha = new Date();
       this.email = email;
     },
+    reset(){
+      this.fecha= null
+      this.email= ''
+      this.totalPrice= 0
+      this.products= []
+    },
     addProduct(product: {name: string, price: number, code: string}) {
       if(this.products.some(p => p.art_code === product.code)){
         this.products.forEach( (p: Product) => {

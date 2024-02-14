@@ -133,6 +133,7 @@
           </div>
         </div>
       </div>
+      <button class="btn btn-primary" @click="logOut">Soy el botón de tu vida</button>
     </div>
   </header>
 </template>
@@ -215,6 +216,11 @@ export default {
     deleteProduct(product){
       this.orderStore.deleteProduct(product.art_code)
     },
+    logOut(){
+      localStorage.removeItem('userLogged')
+      this.userStore.reset()
+      this.orderStore.reset()
+    }
   }
 }
 </script>
