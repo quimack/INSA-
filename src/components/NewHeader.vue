@@ -91,7 +91,8 @@
 
             <span>Tienda</span>
           </button>
-<!-- probando un cambio -->
+
+
           <!-- Contenido del carrito -->
           <div v-if="isCartOpen" class="cart-content active" ref="cartContent">
             <h2 v-if="orderStore.products.length > 1" class="padding-title">
