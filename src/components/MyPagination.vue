@@ -78,4 +78,10 @@ button.selected.page-link{
 .number:hover, button:hover{
   color: #023e8a;
 }
+
+@media (max-width: 600px){
+  ul{
+    font-size: 0.8rem;
+  }
+}
 </style>

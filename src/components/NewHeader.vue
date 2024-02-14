@@ -158,11 +158,7 @@
             </div>
           </div>
 
-          <div>
-            <button class="header-bottom-actions-btn" data-nav-open-btn aria-label="Open Menu">
-              <ion-icon name="menu-outline"></ion-icon>
-            </button>
-          </div>
+          <div></div>
         </div>
       </div>
     </div>
@@ -533,9 +529,17 @@ a {
 .header-bottom-right {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
-@media (min-width: 600px) {
+@media (max-width: 600px) {
+  .cart-content {
+    top: 5em;
+    width: 90vw;
+  }
+}
+
+@media (min-width: 601px) {
   .container-header {
     max-width: 550px;
     margin-inline: auto;

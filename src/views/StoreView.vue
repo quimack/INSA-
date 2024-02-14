@@ -420,4 +420,19 @@ function showSubCategories(index, i) {
   text-decoration: none;
   cursor: pointer;
 }
+
+@media (max-width: 600px){
+  .products-container{
+    flex-direction: column;
+  }
+  .card{
+    width: 55vw
+  }
+  .aside-container{
+    display: none;
+  }
+  .main-container{
+    width: 100%;
+  }
+}
 </style>
