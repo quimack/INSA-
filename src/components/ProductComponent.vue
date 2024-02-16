@@ -10,19 +10,16 @@
     </header>
     <main class="">
       <h4>{{ name }}</h4>
-      <!-- <p class="detail">{{ description }}</p> -->
       <div class="price">$ {{ price }}</div>
     </main>
-    <footer>
-      <!-- <div class="detail" v-if="uxpack">unidades x pack: {{ uxpack }}</div> -->
-      
+    <footer>      
       <div class="btn-actions">
-        <button @click=" isUserLogged() ? addProduct() : $emit('openLogin')" class="btn btn-primary">
+        <button @click=" isUserLogged() ? addProduct() : $emit('openLogin')" class="btn">
           <span v-if="!isProductAdded()">AGREGAR</span>
           <span v-if="isProductAdded()">+</span>
         </button>
         
-        <button v-if="isUserLogged && isProductAdded()" @click="subtractProduct()" class="btn btn-primary">
+        <button v-if="isUserLogged && isProductAdded()" @click="subtractProduct()" class="btn">
           <span v-if="isProductAdded()">-</span>
         </button>
       </div>
@@ -79,8 +76,6 @@ export default {
 
 <style scoped>
 .card {
-  /* width: 16em; */
-  /* height: 26em; */
   width: 19vw;
   height: 20em;
   border-radius: 16px;

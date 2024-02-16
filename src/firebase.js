@@ -9,5 +9,4 @@ export const firebaseApp = initializeApp({
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 })
 
-// used for the firestore refs
 export const db = getFirestore(firebaseApp)

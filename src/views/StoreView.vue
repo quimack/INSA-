@@ -30,6 +30,15 @@
     </div>
 
     <main class="main-container" v-if="!showSpinner">
+      <div class="btn-container">
+        <button
+          v-if="orderStore.products.length >= 1"
+          class="btn"
+          @click="$emit('openOrderModal')"
+        >
+          Ver Resumen
+        </button>
+      </div>
       <input
         @input="setFilters()"
         class="search"
@@ -66,11 +75,13 @@ import { onMounted, ref } from 'vue'
 import MyPagination from '@/components/MyPagination.vue'
 import axios from 'axios'
 import { VueSpinner } from 'vue3-spinners'
+import { useOrderStore } from '@/stores/orderState'
 
-const emit = defineEmits(['openLogin'])
+const emit = defineEmits(['openLogin', 'openOrderModal'])
 function openLogin() {
   emit('openLogin')
 }
+const orderStore = useOrderStore()
 
 let showSpinner = ref(true)
 let productsList = ref([])
@@ -355,6 +366,29 @@ function showSubCategories(index, i) {
   border-bottom: 1px solid #d6d6d6;
   width: 90%;
   text-align: start;
+}
+
+.btn-container {
+  width: 80%;
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 1em;
+}
+
+.btn {
+  position: relative;
+  background: var(--orange-soda);
+  color: var(--white);
+  font-family: var(--ff-poppins);
+  font-size: var(--fs-5);
+  text-transform: var(--text-transform, capitalize);
+  border: 1px solid var(--orange-soda);
+  padding: 10px 20px;
+  z-index: 1;
+  border-radius: 5px;
+}
+.btn:hover {
+  --orange-soda: hsl(7, 72%, 46%);
 }
 .item {
   color: #023e8a;

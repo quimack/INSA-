@@ -247,7 +247,7 @@ export default {
       localStorage.removeItem('userLogged')
       this.userStore.reset()
       this.orderStore.reset()
-      this.isLoggedIn = false // Actualizar el estado de inicio de sesión al cerrar sesión
+      this.isLoggedIn = false
       this.$router.push('/')
     }
   }

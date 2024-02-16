@@ -24,7 +24,7 @@ export default {
       this.showLogin = !this.showLogin
     },
     handleOrderModal() {
-      this.showOrderModal = true 
+      this.showOrderModal = !this.showOrderModal 
     }
   }
 }
@@ -33,7 +33,7 @@ export default {
 <template>
   <div>
     <NewHeader :showLogin="false" @openLogin="handleLogin" @openOrderModal="handleOrderModal" />
-    <RouterView  @openLogin="handleLogin"/>
+    <RouterView  @openLogin="handleLogin" @openOrderModal="handleOrderModal"/>
     <vue-final-modal v-model="showLogin" classes="modal-container" content-class="modal-content">
       <LoginComponent :showLogin="true" @hideLogin="handleLogin" />
     </vue-final-modal>
@@ -43,7 +43,7 @@ export default {
       classes="modal-container"
       content-class="modal-content large"
     >
-      <OrderModal :showOrderModal="true" />
+      <OrderModal :showOrderModal="true" @handleModal="handleOrderModal"/>
     </vue-final-modal>
     <FooterComponent />
   </div>
@@ -61,7 +61,6 @@ export default {
   margin: 0 1rem;
   min-width: 20vw;
   max-width: 400px;
-  border: 1px solid #e2e8f0;
   border-radius: 8px;
   background: #fff;
 }

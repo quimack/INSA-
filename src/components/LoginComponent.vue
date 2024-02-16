@@ -116,16 +116,16 @@
     <p>{{ modalInfo }}</p>
 
     <div v-if="showRegister && !registerSuccesful" class="btn-actions-container">
-      <button class="btn btn-primary btn-modal" @click="toLoginModalAction()">
+      <button class="btn  btn-modal" @click="toLoginModalAction()">
         Iniciar sesión
       </button>
-      <button class="btn btn-primary btn-modal" @click="toRegisterModalAction()">
+      <button class="btn  btn-modal" @click="toRegisterModalAction()">
         Volver al registro
       </button>
     </div>
 
     <div v-if="showRegister && registerSuccesful" class="btn-actions-container">
-      <button class="btn btn-primary btn-modal" @click="toStore()">Ir a la tienda</button>
+      <button class="btn  btn-modal" @click="toStore()">Ir a la tienda</button>
     </div>
   </vue-final-modal>
 
@@ -133,7 +133,7 @@
     <h3 class="modal-title">{{ modalTitle }}</h3>
     <p>{{ modalInfo }}</p>
     <div class="btn-actions-container">
-      <button class="btn btn-primary btn-modal" @click="toRegisterModalAction()">Volver</button>
+      <button class="btn btn-modal" @click="toRegisterModalAction()">Volver</button>
     </div>
   </vue-final-modal>
 </template>
@@ -327,7 +327,6 @@ export default {
   justify-content: center;
   align-items: center;
   margin-top: 1em;
-  /* width: 80%; */
 }
 .btn-modal {
   margin: 0 1em;

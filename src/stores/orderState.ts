@@ -70,7 +70,7 @@ export const useOrderStore = defineStore('order', {
         const totalProduct = p.price * p.quantity;
         counter += totalProduct;
       })
-      this.totalPrice = counter;
+      this.totalPrice = Number(counter.toFixed(2));
       return this.totalPrice;
     }
   }
