@@ -210,17 +210,22 @@ let brands = ref([
     show_categories: false
   },
   {
+    name: 'Tyrolit',
+    categories: [{ name: 'Discos y diamantados', show_subcategories: false }],
+    show_categories: false
+  },
+  {
+    name: 'Norton',
+    categories: [],
+    show_categories: false
+  },
+  {
     name: 'El galgo',
     categories: [
       { name: 'Pinceles', show_subcategories: false },
       { name: 'Rodillos', show_subcategories: false },
       { name: 'Lijas', show_subcategories: false }
     ],
-    show_categories: false
-  },
-  {
-    name: 'Tyrolit',
-    categories: [{ name: 'Discos y diamantados', show_subcategories: false }],
     show_categories: false
   },
   {
@@ -235,12 +240,12 @@ let brands = ref([
     name: 'Aliafor',
     categories: [
       { name: 'Discos', show_subcategories: false },
-      { name: 'Hile next', show_subcategories: false }
+      { name: 'Hole next', show_subcategories: false }
     ],
     show_categories: false
   },
   {
-    name: 'Patrol',
+    name: 'Patroll',
     categories: [],
     show_categories: false
   },
@@ -249,11 +254,7 @@ let brands = ref([
     categories: [],
     show_categories: false
   },
-  {
-    name: 'Norton',
-    categories: [],
-    show_categories: false
-  },
+
   {
     name: 'Ruhlmann',
     categories: [],
@@ -276,11 +277,26 @@ let brands = ref([
     name: 'Buloneria',
     categories: [
       { name: 'Bulones', show_subcategories: false },
-      { name: 'Tornillos', show_subcategories: false },
+      { name: 'ornillos', show_subcategories: false },
       { name: 'Arandelas', show_subcategories: false },
-      { name: 'Tira fondos', show_subcategories: false },
+      { name: 'Tirafondos', show_subcategories: false },
       { name: 'Varios', show_subcategories: false }
     ],
+    show_categories: false
+  },
+  {
+    name: 'Aerosoles',
+    categories: [],
+    show_categories: false
+  },
+  {
+    name: 'Siliconas',
+    categories: [],
+    show_categories: false
+  },
+  {
+    name: 'Varios',
+    categories: [],
     show_categories: false
   }
 ])
@@ -343,7 +359,7 @@ function showSubCategories(index, i) {
   color: #023e8a;
   font-size: 1.2em;
   font-weight: bold;
-  cursor: default;
+  cursor: pointer;
 }
 .item:hover,
 .subitem:hover {
@@ -421,17 +437,17 @@ function showSubCategories(index, i) {
   cursor: pointer;
 }
 
-@media (max-width: 600px){
-  .products-container{
+@media (max-width: 600px) {
+  .products-container {
     flex-direction: column;
   }
-  .card{
-    width: 55vw
+  .card {
+    width: 55vw;
   }
-  .aside-container{
+  .aside-container {
     display: none;
   }
-  .main-container{
+  .main-container {
     width: 100%;
   }
 }
