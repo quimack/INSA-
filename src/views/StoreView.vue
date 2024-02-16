@@ -190,7 +190,11 @@ let brands = ref([
     name: 'Doble A',
     categories: [
       {
-        name: 'Cintas y Discos',
+        name: 'Cintas',
+        show_subcategories: false
+      },
+      {
+        name: 'Discos',
         show_subcategories: false
       },
       {
@@ -211,7 +215,11 @@ let brands = ref([
   },
   {
     name: 'Tyrolit',
-    categories: [{ name: 'Discos y diamantados', show_subcategories: false }],
+    categories: [
+      { name: 'Discos', show_subcategories: false },
+      { name: 'Diamantados', show_subcategories: false }
+    ],
+
     show_categories: false
   },
   {
@@ -262,7 +270,10 @@ let brands = ref([
   },
   {
     name: 'Tek bond',
-    categories: [],
+    categories: [
+      { name: 'Aerosoles', show_subcategories: false },
+      { name: 'Siliconas', show_subcategories: false }
+    ],
     show_categories: false
   },
   {
@@ -282,16 +293,6 @@ let brands = ref([
       { name: 'Tirafondos', show_subcategories: false },
       { name: 'Varios', show_subcategories: false }
     ],
-    show_categories: false
-  },
-  {
-    name: 'Aerosoles',
-    categories: [],
-    show_categories: false
-  },
-  {
-    name: 'Siliconas',
-    categories: [],
     show_categories: false
   },
   {
