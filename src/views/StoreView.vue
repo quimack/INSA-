@@ -283,7 +283,8 @@ let brands = ref([
     name: 'Tek bond',
     categories: [
       { name: 'Aerosoles', show_subcategories: false },
-      { name: 'Siliconas', show_subcategories: false }
+      { name: 'Siliconas', show_subcategories: false },
+      { name: 'Varios', show_subcategories: false }
     ],
     show_categories: false
   },
@@ -299,10 +300,9 @@ let brands = ref([
     name: 'Buloneria',
     categories: [
       { name: 'Bulones', show_subcategories: false },
-      { name: 'ornillos', show_subcategories: false },
+      { name: 'Tornillos', show_subcategories: false },
       { name: 'Arandelas', show_subcategories: false },
       { name: 'Tirafondos', show_subcategories: false },
-      { name: 'Varios', show_subcategories: false }
     ],
     show_categories: false
   },
