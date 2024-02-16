@@ -11,7 +11,7 @@
           Desde hace más de 30 años. Tenemos una amplia trayectoria en el sector y una variada gama
           de productos. ¡Combinamos la calidad con los mejores precios! Somos
           <strong>representantes oficiales</strong> de grandes  tales como:
-          <span class="light-color">Aliafor, Patrol, Venturo, Doble A, Tyrolit, Norton, Teckbond y El Galgo.</span> Brindamos
+          <span class="light-color">Doble A, Tyrolit, Norton, El Galgo , Aliafor, Patroll, Venturo, Teckbond.</span> Brindamos
           soluciones a nuestros clientes más allá de la venta de productos.
         </p>
         <button class="btn" @click="routeStore()">Conoce Nuestra Tienda On-line</button>
