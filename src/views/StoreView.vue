@@ -1,10 +1,12 @@
 <template>
   <div class="wrapper">
     <aside class="aside-container">
+      <div class="clear" @click="clearFilters()">Limpiar filtros</div>
       <div v-for="(brand, index) in brands" v-bind:key="index" class="item-container">
         <div
           class="item"
-          @click="brand.categories.length >= 1 ? showCategorie(index) : filterByBrand(brand.name)"
+          :class="{ selected: filters.brand === brand.name }"
+          @click="setBrand(brand.name, index)"
         >
           {{ brand.name }}
         </div>
@@ -13,11 +15,8 @@
             v-for="(categorie, i) in brand.categories"
             v-bind:key="i"
             class="subitem"
-            @click="
-              categorie.subcategories?.length >= 1
-                ? showSubCategories(index, i)
-                : filterByCategorie(brand, categorie)
-            "
+            :class="{ selected: filters.categorie === categorie.name }"
+            @click="setCategorie(categorie.name)"
           >
             {{ categorie.name }}
           </div>
@@ -31,11 +30,7 @@
 
     <main class="main-container" v-if="!showSpinner">
       <div class="btn-container">
-        <button
-          v-if="orderStore.products.length >= 1"
-          class="btn"
-          @click="$emit('openOrderModal')"
-        >
+        <button v-if="orderStore.products.length >= 1" class="btn" @click="$emit('openOrderModal')">
           Ver Resumen
         </button>
       </div>
@@ -52,7 +47,7 @@
           @openLogin="openLogin"
           v-bind:key="index"
           :name="item.ART_DESCR"
-          :price="item.ART_PREVT"
+          :price="item.PRECIO"
           :code="item.ART_CODIG"
         />
       </div>
@@ -93,6 +88,8 @@ let filters = ref({
   search: ''
 })
 
+let brands = ref()
+
 // Pagination:
 let paginatedProducts = ref([])
 let page = ref(1)
@@ -113,7 +110,9 @@ onMounted(async () => {
       }
     })
     let endRange = sheetData.data.sheets[0].properties.gridProperties.rowCount
-    let range = `A1:C${Number(endRange) - 3}`
+    // let range = `A1:C${Number(endRange) - 3}`
+    let range = `A1:E${endRange}`
+
     let sheetValues = await axios({
       method: 'get',
       url: `${sheetsApi}/v4/spreadsheets/${spreadsheetId}/values/${range}`,
@@ -125,25 +124,39 @@ onMounted(async () => {
     sheetValues.data.values.forEach((row, i) => {
       let obj = {}
       row.forEach((cell, index) => {
-        if (i === 0) keys.push(cell)
+        if (i === 0) {
+          if (index === 2) {
+            keys.push('PRECIO')
+          } else {
+            keys.push(cell)
+          }
+        }
         if (index === 0) obj[keys[0]] = cell
         if (index === 1) obj[keys[1]] = cell
-        if (index === 2) obj[keys[2]] = cell
+        if (index === 2) {
+          if (i === 0) {
+            obj[keys[2]] = 'PRECIO'
+          } else {
+            obj[keys[2]] = cell
+          }
+        }
         if (index === 3) obj[keys[3]] = cell
+        if (index === 4) obj[keys[4]] = cell
       })
       productsList.value.push(obj)
     })
     productsList.value = formatData(productsList.value)
     productsList.value = productsList.value.filter((p) => {
-      const value = Number(p.ART_PREVT)
+      const value = Number(p.PRECIO)
       return !Number.isNaN(value)
     })
 
     productsList.value = orderList(productsList.value)
-
+    brands.value = getBrands(productsList.value)
+    brands.value = getCategories(productsList.value, brands.value)
     filteredProducts.value = JSON.parse(JSON.stringify(productsList.value))
-    setPage(1)
 
+    setPage(1)
     showSpinner.value = false
   } catch (error) {
     console.log(error)
@@ -164,25 +177,103 @@ function orderList(data) {
 }
 function formatData(data) {
   data.forEach((i) => {
-    if (i.ART_PREVT) {
-      i.ART_PREVT = i.ART_PREVT.replace(/,/g, '')
+    if (i.PRECIO) {
+      i.PRECIO = i.PRECIO.replace(/[$ ,]/g, '')
     }
   })
   return data
 }
 
+function getBrands(data) {
+  let brands = []
+
+  data.forEach((i) => {
+    if (
+      !brands.some(
+        (b) =>
+          b.name.charAt(0).toUpperCase() + b.name.slice(1) ===
+          i.marca.charAt(0).toUpperCase() + i.marca.slice(1)
+      )
+    )
+      brands.push({
+        name: i.marca.charAt(0).toUpperCase() + i.marca.slice(1),
+        categories: [],
+        show_categories: false
+      })
+  })
+
+  console.log(brands)
+
+  return brands
+}
+
+function getCategories(data, brands) {
+  brands = brands.map((b) => {
+    let categories = []
+    data.forEach((i) => {
+      if (
+        i.marca.charAt(0).toUpperCase() + i.marca.slice(1) ===
+        b.name.charAt(0).toUpperCase() + b.name.slice(1)
+      ) {
+        let isCategorie = categories.some(
+          (c) =>
+            c.name.charAt(0).toUpperCase() + c.name.slice(1) ===
+            i.rubro.charAt(0).toUpperCase() + i.rubro.slice(1)
+        )
+        if (i.rubro && !isCategorie)
+          categories.push({ name: i.rubro.charAt(0).toUpperCase() + i.rubro.slice(1) })
+      }
+    })
+    return { ...b, categories: categories }
+  })
+
+  return brands
+}
+
+function setBrand(value, index) {
+  filters.value.categorie = ''
+  showCategorie(index)
+  filters.value.brand = value
+  setFilters()
+}
+
+function setCategorie(value) {
+  filters.value.categorie = value
+  console.log(filters.value)
+  setFilters()
+}
+
 // FILTER
 function setFilters() {
   filteredProducts.value = productsList.value.filter((i) => {
-    if (
-      i.ART_DESCR?.toLowerCase().includes(filters.value.search.toLowerCase()) ||
-      (filters.value.brand && filters.value.brand.toLowerCase() === i.ART_BRAND?.toLowerCase()) ||
-      (filters.value.categorie &&
-        filters.value.categorie.toLowerCase() === i.ART_CATEG?.toLowerCase())
-    ) {
-      return i
+    if (filters.value.brand && filters.value.categorie) {
+      return (
+        filters.value.brand.toLowerCase() === i.marca?.toLowerCase() &&
+        filters.value.categorie.toLowerCase() === i.rubro?.toLowerCase()
+      )
+    }
+    if (filters.value.brand && !filters.value.categorie) {
+      return filters.value.brand.toLowerCase() === i.marca?.toLowerCase()
+    }
+    if (!filters.value.brand && filters.value.categorie) {
+      return filters.value.categorie.toLowerCase() === i.rubro?.toLowerCase()
     }
   })
+
+  filteredProducts.value = filteredProducts.value.filter((i) =>
+    i.ART_DESCR?.toLowerCase().includes(filters.value.search.toLowerCase())
+  )
+  console.log(filteredProducts.value)
+  setPage(1)
+}
+
+function clearFilters() {
+  filters.value = {
+    brand: null,
+    categorie: null,
+    search: ''
+  }
+  filteredProducts.value = productsList.value
   setPage(1)
 }
 
@@ -196,122 +287,122 @@ function setPage(page) {
   paginatedProducts.value = filteredProducts.value.slice(startIndex, endIndex)
 }
 
-let brands = ref([
-  {
-    name: 'Doble A',
-    categories: [
-      {
-        name: 'Cintas',
-        show_subcategories: false
-      },
-      {
-        name: 'Discos',
-        show_subcategories: false
-      },
-      {
-        name: 'Velcro',
-        show_subcategories: false,
-        subcategories: [{ name: 'Discos papel' }, { name: 'Discos de corte' }]
-      },
-      {
-        name: 'Lijas',
-        show_subcategories: false
-      },
-      {
-        name: 'Bandas',
-        show_subcategories: false
-      }
-    ],
-    show_categories: false
-  },
-  {
-    name: 'Tyrolit',
-    categories: [
-      { name: 'Discos', show_subcategories: false },
-      { name: 'Diamantados', show_subcategories: false }
-    ],
+// let brands = ref([
+//   {
+//     name: 'Doble A',
+//     categories: [
+//       {
+//         name: 'Cinta',
+//         show_subcategories: false
+//       },
+//       {
+//         name: 'Disco',
+//         show_subcategories: false
+//       },
+//       {
+//         name: 'Velcro',
+//         show_subcategories: false,
+//         subcategories: [{ name: 'Discos papel' }, { name: 'Discos de corte' }]
+//       },
+//       {
+//         name: 'Lija',
+//         show_subcategories: false
+//       },
+//       {
+//         name: 'Bandas',
+//         show_subcategories: false
+//       }
+//     ],
+//     show_categories: false
+//   },
+//   {
+//     name: 'Tyrolit',
+//     categories: [
+//       { name: 'Disco', show_subcategories: false },
+//       { name: 'Diamantado', show_subcategories: false }
+//     ],
 
-    show_categories: false
-  },
-  {
-    name: 'Norton',
-    categories: [],
-    show_categories: false
-  },
-  {
-    name: 'El galgo',
-    categories: [
-      { name: 'Pinceles', show_subcategories: false },
-      { name: 'Rodillos', show_subcategories: false },
-      { name: 'Lijas', show_subcategories: false }
-    ],
-    show_categories: false
-  },
-  {
-    name: 'Congo',
-    categories: [
-      { name: 'Cola', show_subcategories: false },
-      { name: 'Cemento', show_subcategories: false }
-    ],
-    show_categories: false
-  },
-  {
-    name: 'Aliafor',
-    categories: [
-      { name: 'Discos', show_subcategories: false },
-      { name: 'Hole next', show_subcategories: false }
-    ],
-    show_categories: false
-  },
-  {
-    name: 'Patroll',
-    categories: [],
-    show_categories: false
-  },
-  {
-    name: 'Venturo',
-    categories: [],
-    show_categories: false
-  },
+//     show_categories: false
+//   },
+//   {
+//     name: 'Norton',
+//     categories: [],
+//     show_categories: false
+//   },
+//   {
+//     name: 'El galgo',
+//     categories: [
+//       { name: 'Pinceles', show_subcategories: false },
+//       { name: 'Rodillos', show_subcategories: false },
+//       { name: 'Lijas', show_subcategories: false }
+//     ],
+//     show_categories: false
+//   },
+//   {
+//     name: 'Congo',
+//     categories: [
+//       { name: 'Cola', show_subcategories: false },
+//       { name: 'Cemento', show_subcategories: false }
+//     ],
+//     show_categories: false
+//   },
+//   {
+//     name: 'Aliafor',
+//     categories: [
+//       { name: 'Discos', show_subcategories: false },
+//       { name: 'Hole next', show_subcategories: false }
+//     ],
+//     show_categories: false
+//   },
+//   {
+//     name: 'Patroll',
+//     categories: [],
+//     show_categories: false
+//   },
+//   {
+//     name: 'Venturo',
+//     categories: [],
+//     show_categories: false
+//   },
 
-  {
-    name: 'Ruhlmann',
-    categories: [],
-    show_categories: false
-  },
-  {
-    name: 'Tek bond',
-    categories: [
-      { name: 'Aerosoles', show_subcategories: false },
-      { name: 'Siliconas', show_subcategories: false },
-      { name: 'Varios', show_subcategories: false }
-    ],
-    show_categories: false
-  },
-  {
-    name: 'Electrodos',
-    categories: [
-      { name: 'Sideral', show_subcategories: false },
-      { name: 'Conarco', show_subcategories: false }
-    ],
-    show_categories: false
-  },
-  {
-    name: 'Buloneria',
-    categories: [
-      { name: 'Bulones', show_subcategories: false },
-      { name: 'Tornillos', show_subcategories: false },
-      { name: 'Arandelas', show_subcategories: false },
-      { name: 'Tirafondos', show_subcategories: false },
-    ],
-    show_categories: false
-  },
-  {
-    name: 'Varios',
-    categories: [],
-    show_categories: false
-  }
-])
+//   {
+//     name: 'Ruhlmann',
+//     categories: [],
+//     show_categories: false
+//   },
+//   {
+//     name: 'Tek bond',
+//     categories: [
+//       { name: 'Aerosoles', show_subcategories: false },
+//       { name: 'Siliconas', show_subcategories: false },
+//       { name: 'Varios', show_subcategories: false }
+//     ],
+//     show_categories: false
+//   },
+//   {
+//     name: 'Electrodos',
+//     categories: [
+//       { name: 'Sideral', show_subcategories: false },
+//       { name: 'Conarco', show_subcategories: false }
+//     ],
+//     show_categories: false
+//   },
+//   {
+//     name: 'Buloneria',
+//     categories: [
+//       { name: 'Bulones', show_subcategories: false },
+//       { name: 'Tornillos', show_subcategories: false },
+//       { name: 'Arandelas', show_subcategories: false },
+//       { name: 'Tirafondos', show_subcategories: false }
+//     ],
+//     show_categories: false
+//   },
+//   {
+//     name: 'Varios',
+//     categories: [],
+//     show_categories: false
+//   }
+// ])
 
 function showCategorie(index) {
   brands.value.forEach((item, i) => {
@@ -361,6 +452,12 @@ function showSubCategories(index, i) {
   margin-top: 3em;
 }
 
+.clear {
+  cursor: pointer;
+  color: #023e8a;
+  padding-bottom: 0.8em;
+}
+
 .item-container {
   padding: 0.5em 0;
   border-bottom: 1px solid #d6d6d6;
@@ -397,10 +494,12 @@ function showSubCategories(index, i) {
   cursor: pointer;
 }
 .item:hover,
-.subitem:hover {
+.item.selected,
+.clear:hover,
+.subitem:hover,
+.subitem.selected {
   color: #ff5a3d;
 }
-
 .subitem-container {
   padding: 0.5em 0 0.5em 1vw;
 }

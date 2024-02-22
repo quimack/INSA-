@@ -83,7 +83,7 @@ export default {
         let productProps = []
         Object.entries(product).forEach((k) => {
           if (k[0] === 'art_code') k[0] = 'ART_CODIG'
-          if (k[0] === 'price') k[0] = 'ART_PREVT'
+          if (k[0] === 'price') k[0] = 'PRECIO'
           if (k[0] === 'name') k[0] = 'ART_DESCR'
           if (k[0] === 'quantity') k[0] = 'CANTIDAD'
 
