@@ -46,6 +46,7 @@
 import { useOrderStore } from '@/stores/orderState'
 import { VueSpinner } from 'vue3-spinners'
 import axios from 'axios'
+import xlsx from 'xlsx/dist/xlsx.full.min';
 
 export default {
   name: 'OrderModal',
@@ -147,6 +148,21 @@ export default {
       }
 
       this.sendEmail(data)
+      // this.exportExcel(user)
+    },
+    exportExcel(user){
+      const framework = JSON.parse(JSON.stringify(this.orderStore.$state.products));
+      framework.push({name: '', art_code: '', price: '', quantity: ''})
+      framework.push({name: '', art_code: '', price: '', quantity: ''})
+      framework.push({name: 'TOTAL', art_code: '', price: this.orderStore.$state.totalPrice, quantity: ''})
+
+      const XLSX = xlsx;
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(framework);
+      XLSX.utils.book_append_sheet(workbook, worksheet, "framework");
+      XLSX.writeFile(workbook, `pedido-${user.empresa}-${this.formatDate(this.orderStore.$state.fecha, 'es', {
+        dateStyle: 'short'
+      })}.xlsx`);
     },
     toHome() {
       this.showModalInfo = false
