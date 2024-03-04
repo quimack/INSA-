@@ -41,6 +41,11 @@
         v-model="filters.search"
         placeholder="Ingrese su búsqueda"
       />
+
+      <div v-if="paginatedProducts.length < 1" class="products-container" style="color: #ff5a3d">
+        No hay productos que coincidan con la búsqueda.
+      </div>
+
       <div class="products-container">
         <ProductComponent
           v-for="(item, index) in paginatedProducts"
@@ -51,7 +56,7 @@
           :code="item.ART_CODIG"
         />
       </div>
-
+    
       <pagination
         :options="{ template: MyPagination }"
         v-model="page"
@@ -64,12 +69,12 @@
 </template>
 
 <script setup>
-import ProductComponent from '@/components/ProductComponent.vue'
-import Pagination from 'v-pagination-3'
 import { onMounted, ref } from 'vue'
-import MyPagination from '@/components/MyPagination.vue'
-import axios from 'axios'
 import { VueSpinner } from 'vue3-spinners'
+import axios from 'axios'
+import Pagination from 'v-pagination-3'
+import ProductComponent from '@/components/ProductComponent.vue'
+import MyPagination from '@/components/MyPagination.vue'
 import { useOrderStore } from '@/stores/orderState'
 
 const emit = defineEmits(['openLogin', 'openOrderModal'])
@@ -202,8 +207,6 @@ function getBrands(data) {
       })
   })
 
-  console.log(brands)
-
   return brands
 }
 
@@ -239,7 +242,6 @@ function setBrand(value, index) {
 
 function setCategorie(value) {
   filters.value.categorie = value
-  console.log(filters.value)
   setFilters()
 }
 
@@ -260,11 +262,18 @@ function setFilters() {
     }
   })
 
-  filteredProducts.value = filteredProducts.value.filter((i) =>
-    i.ART_DESCR?.toLowerCase().includes(filters.value.search.toLowerCase())
-  )
-  console.log(filteredProducts.value)
+  if (filteredProducts.value.length > 0) {
+    filteredProducts.value = filteredProducts.value.filter((i) => {
+      return i.ART_DESCR?.toLowerCase().includes(filters.value.search.toLowerCase())
+    })
+  } else {
+    filteredProducts.value = productsList.value.filter((i) =>
+      i.ART_DESCR?.toLowerCase().includes(filters.value.search.toLowerCase())
+    )
+  }
+
   setPage(1)
+  page.value = 1;
 }
 
 function clearFilters() {
@@ -287,123 +296,6 @@ function setPage(page) {
   paginatedProducts.value = filteredProducts.value.slice(startIndex, endIndex)
 }
 
-// let brands = ref([
-//   {
-//     name: 'Doble A',
-//     categories: [
-//       {
-//         name: 'Cinta',
-//         show_subcategories: false
-//       },
-//       {
-//         name: 'Disco',
-//         show_subcategories: false
-//       },
-//       {
-//         name: 'Velcro',
-//         show_subcategories: false,
-//         subcategories: [{ name: 'Discos papel' }, { name: 'Discos de corte' }]
-//       },
-//       {
-//         name: 'Lija',
-//         show_subcategories: false
-//       },
-//       {
-//         name: 'Bandas',
-//         show_subcategories: false
-//       }
-//     ],
-//     show_categories: false
-//   },
-//   {
-//     name: 'Tyrolit',
-//     categories: [
-//       { name: 'Disco', show_subcategories: false },
-//       { name: 'Diamantado', show_subcategories: false }
-//     ],
-
-//     show_categories: false
-//   },
-//   {
-//     name: 'Norton',
-//     categories: [],
-//     show_categories: false
-//   },
-//   {
-//     name: 'El galgo',
-//     categories: [
-//       { name: 'Pinceles', show_subcategories: false },
-//       { name: 'Rodillos', show_subcategories: false },
-//       { name: 'Lijas', show_subcategories: false }
-//     ],
-//     show_categories: false
-//   },
-//   {
-//     name: 'Congo',
-//     categories: [
-//       { name: 'Cola', show_subcategories: false },
-//       { name: 'Cemento', show_subcategories: false }
-//     ],
-//     show_categories: false
-//   },
-//   {
-//     name: 'Aliafor',
-//     categories: [
-//       { name: 'Discos', show_subcategories: false },
-//       { name: 'Hole next', show_subcategories: false }
-//     ],
-//     show_categories: false
-//   },
-//   {
-//     name: 'Patroll',
-//     categories: [],
-//     show_categories: false
-//   },
-//   {
-//     name: 'Venturo',
-//     categories: [],
-//     show_categories: false
-//   },
-
-//   {
-//     name: 'Ruhlmann',
-//     categories: [],
-//     show_categories: false
-//   },
-//   {
-//     name: 'Tek bond',
-//     categories: [
-//       { name: 'Aerosoles', show_subcategories: false },
-//       { name: 'Siliconas', show_subcategories: false },
-//       { name: 'Varios', show_subcategories: false }
-//     ],
-//     show_categories: false
-//   },
-//   {
-//     name: 'Electrodos',
-//     categories: [
-//       { name: 'Sideral', show_subcategories: false },
-//       { name: 'Conarco', show_subcategories: false }
-//     ],
-//     show_categories: false
-//   },
-//   {
-//     name: 'Buloneria',
-//     categories: [
-//       { name: 'Bulones', show_subcategories: false },
-//       { name: 'Tornillos', show_subcategories: false },
-//       { name: 'Arandelas', show_subcategories: false },
-//       { name: 'Tirafondos', show_subcategories: false }
-//     ],
-//     show_categories: false
-//   },
-//   {
-//     name: 'Varios',
-//     categories: [],
-//     show_categories: false
-//   }
-// ])
-
 function showCategorie(index) {
   brands.value.forEach((item, i) => {
     if (index === i) {
@@ -414,19 +306,19 @@ function showCategorie(index) {
   })
 }
 
-function showSubCategories(index, i) {
-  brands.value.forEach((brand, brandIndex) => {
-    if (index === brandIndex) {
-      brand.categories.forEach((categorie, categorieIndex) => {
-        if (categorieIndex === i) {
-          categorie.show_subcategories = !categorie.show_subcategories
-        } else {
-          categorie.show_subcategories = false
-        }
-      })
-    }
-  })
-}
+// function showSubCategories(index, i) {
+//   brands.value.forEach((brand, brandIndex) => {
+//     if (index === brandIndex) {
+//       brand.categories.forEach((categorie, categorieIndex) => {
+//         if (categorieIndex === i) {
+//           categorie.show_subcategories = !categorie.show_subcategories
+//         } else {
+//           categorie.show_subcategories = false
+//         }
+//       })
+//     }
+//   })
+// }
 </script>
 
 <style scoped>

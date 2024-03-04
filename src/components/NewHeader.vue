@@ -194,7 +194,6 @@ export default {
     },
     ...mapState(useUserStore, ['nombre']),
     userName() {
-      console.log(this.nombre)
       return this.nombre.charAt(0).toUpperCase() + this.nombre.slice(1)
     }
   },
