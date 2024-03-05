@@ -175,7 +175,6 @@ const addImages = async (products) => {
   const context = await import.meta.glob('../../public/img/products/*.jpg');
   const imageNames = Object.keys(context).map(key => key.replace(/^..\/..\/public\/img\/products\/|\.jpg$/g, ''));
 
-  console.log(imageNames)
   let newProducts = products.map((p) => {
     let img = imageNames.find((i) => i === p.ART_CODIG);
     if(img){

@@ -1,6 +1,6 @@
 <template>
   <div @show-login="showLogin" class="card">
-    <header class="img-container">
+    <header class="img-container" :class="{ 'default-img': !img }">
       <img
         :src="img ? img : '/img/no-img.png'"
         alt="imagen producto"
@@ -106,7 +106,7 @@ footer {
   height: 57%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 }
 .img-product {
@@ -116,9 +116,13 @@ footer {
   object-fit: cover;
   object-position: center;
 }
-.default-img {
+.img-container.default-img {
+  justify-content: center;
+}
+.img-product.default-img {
   width: 6em;
 }
+
 h4 {
   padding: 0.3em;
   color: #023e8a;
