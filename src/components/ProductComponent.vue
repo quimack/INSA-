@@ -12,13 +12,13 @@
       <h4>{{ name }}</h4>
       <div class="price">$ {{ price }}</div>
     </main>
-    <footer>      
+    <footer>
       <div class="btn-actions">
-        <button @click=" isUserLogged() ? addProduct() : $emit('openLogin')" class="btn">
+        <button @click="isUserLogged() ? addProduct() : $emit('openLogin')" class="btn">
           <span v-if="!isProductAdded()">AGREGAR</span>
           <span v-if="isProductAdded()">+</span>
         </button>
-        
+
         <button v-if="isUserLogged && isProductAdded()" @click="subtractProduct()" class="btn">
           <span v-if="isProductAdded()">-</span>
         </button>
@@ -37,38 +37,38 @@ export default {
   data() {
     return {
       showLogin: false,
-      orderStore: useOrderStore(),
+      orderStore: useOrderStore()
     }
   },
   methods: {
-    isUserLogged(){
+    isUserLogged() {
       return !!localStorage.getItem('userLogged')
     },
-    isProductAdded(){
-      return !!this.orderStore.$state.products.some(p => p.art_code === this.code)
+    isProductAdded() {
+      return !!this.orderStore.$state.products.some((p) => p.art_code === this.code)
     },
-    addProduct(){
+    addProduct() {
       this.orderStore.addProduct({
         name: this.name,
         code: this.code,
         price: this.price
       })
     },
-    subtractProduct(){
+    subtractProduct() {
       let product = {}
-      if(this.orderStore.$state.products.some(p => p.art_code === this.code)){
-        product = this.orderStore.$state.products.find(p => p.art_code === this.code)
-        if(product.quantity > 1){
+      if (this.orderStore.$state.products.some((p) => p.art_code === this.code)) {
+        product = this.orderStore.$state.products.find((p) => p.art_code === this.code)
+        if (product.quantity > 1) {
           this.orderStore.subtractProduct(this.code)
-        }else{
+        } else {
           this.orderStore.deleteProduct(this.code)
         }
-      }else{
+      } else {
         this.orderStore.deleteProduct(this.code)
       }
     },
-    getQuantity(){
-      return this.orderStore.products.find(p=> p.art_code === this.code).quantity
+    getQuantity() {
+      return this.orderStore.products.find((p) => p.art_code === this.code).quantity
     }
   }
 }
@@ -77,7 +77,7 @@ export default {
 <style scoped>
 .card {
   width: 19vw;
-  height: 20em;
+  height: 30em;
   border-radius: 16px;
   margin: 1.3em 1.3em 3em 1.3em;
   box-shadow: var(--shadow-1);
@@ -88,20 +88,22 @@ footer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 27%;
 }
 
-main{
+main {
   justify-content: space-between;
+  padding-block: 0.8em;
+  height: 24%;
 }
 
-footer{
+footer {
   justify-content: flex-start;
-  padding-top: .8em;
+  padding-top: 0.8em;
+  height: 19%;
 }
 
 .img-container {
-  height: 46%;
+  height: 57%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -110,6 +112,9 @@ footer{
 .img-product {
   border-radius: 16px 16px 0 0;
   max-height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 .default-img {
   width: 6em;
@@ -128,10 +133,10 @@ h4 {
   font-size: 14px;
   text-align: center;
   font-weight: 400;
-  padding-top: .5em
+  padding-top: 0.5em;
 }
 
-.btn-actions{
+.btn-actions {
   display: flex;
   justify-content: space-around;
 }
@@ -152,5 +157,4 @@ h4 {
 .btn:hover {
   --orange-soda: hsl(7, 72%, 46%);
 }
-
 </style>

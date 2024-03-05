@@ -51,6 +51,7 @@
           v-for="(item, index) in paginatedProducts"
           @openLogin="openLogin"
           v-bind:key="index"
+          :img="item.img"
           :name="item.ART_DESCR"
           :price="item.PRECIO"
           :code="item.ART_CODIG"
@@ -156,6 +157,7 @@ onMounted(async () => {
       return !Number.isNaN(value)
     })
 
+    productsList.value = await addImages(productsList.value)
     productsList.value = orderList(productsList.value)
     brands.value = getBrands(productsList.value)
     brands.value = getCategories(productsList.value, brands.value)
@@ -168,6 +170,22 @@ onMounted(async () => {
     showSpinner.value = false
   }
 })
+
+const addImages = async (products) => {
+  const context = await import.meta.glob('../../public/img/products/*.jpg');
+  const imageNames = Object.keys(context).map(key => key.replace(/^..\/..\/public\/img\/products\/|\.jpg$/g, ''));
+
+  console.log(imageNames)
+  let newProducts = products.map((p) => {
+    let img = imageNames.find((i) => i === p.ART_CODIG);
+    if(img){
+      return {...p, img: `/img/products/${img}.jpg`}
+    }else{
+      return {...p, img: null}
+    }
+  })
+  return newProducts 
+}
 
 function orderList(data) {
   return data.sort((a, b) => {
