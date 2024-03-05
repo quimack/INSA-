@@ -420,7 +420,7 @@ function showCategorie(index) {
 
 .main-container {
   width: 75%;
-  padding: 3em 4vw;
+  padding: 3em 4vw 6em 4vw;
   display: flex;
   flex-direction: column;
   align-items: center;
