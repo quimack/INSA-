@@ -18,6 +18,7 @@
     "axios": "^1.6.7",
     "firebase": "^10.8.0",
     "pinia": "^2.1.7",
+    "resend": "^3.2.0",
     "v-pagination-3": "^0.1.7",
     "vue": "^3.3.11",
     "vue-final-modal": "^3.4.11",
