@@ -47,9 +47,10 @@ import { useOrderStore } from '@/stores/orderState'
 import { VueSpinner } from 'vue3-spinners'
 import emailjs from '@emailjs/browser'
 import pdfmake from 'pdfmake'
-import pdfMake from 'pdfmake/build/pdfmake'
-import pdfFonts from 'pdfmake/build/vfs_fonts'
-pdfMake.vfs = pdfFonts.pdfMake.vfs
+import pdfMake from "pdfmake/build/pdfmake"
+import pdfFonts from '../assets/fonts/vfs_fonts.js'
+
+pdfMake.vfs = pdfFonts;
 
 export default {
   name: 'OrderModal',
@@ -241,7 +242,6 @@ export default {
   padding: 1.5em 3em;
   min-width: 40vw !important;
   max-width: 400px;
-  /* border: 1px solid #e2e8f0; */
   border-radius: 8px;
   background: #fff;
 }
