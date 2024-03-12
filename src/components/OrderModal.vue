@@ -45,9 +45,11 @@
 <script>
 import { useOrderStore } from '@/stores/orderState'
 import { VueSpinner } from 'vue3-spinners'
-import axios from 'axios'
 import emailjs from '@emailjs/browser'
-import xlsx from 'xlsx/dist/xlsx.full.min';
+import pdfmake from 'pdfmake'
+import pdfMake from 'pdfmake/build/pdfmake'
+import pdfFonts from 'pdfmake/build/vfs_fonts'
+pdfMake.vfs = pdfFonts.pdfMake.vfs
 
 export default {
   name: 'OrderModal',
@@ -100,16 +102,10 @@ export default {
       this.showSpinner = true
       const service_id = import.meta.env.VITE_EMAILJS_SERVICE_ID
       const template_id = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
-
+      const public_key = import.meta.env.VITE_EMAILJS_USER_ID
       try {
-        await emailjs.send(service_id, template_id, { ...data, content: excel })
+        await emailjs.send(service_id, template_id, data, public_key)
 
-        // const url = 'https://api.emailjs.com/api/v1.0/email/send'
-        // await axios.post(url, data, {
-        //   headers: {
-        //     'Content-Type': 'application/json'
-        //   }
-        // })
         this.showSpinner = false
         this.sendedEmail = true
         this.modalTitle = 'El pedido ha sido enviado de manera exitosa!'
@@ -137,48 +133,89 @@ export default {
       })
       const formatedProducts = this.formatProducts(this.orderStore.$state.products)
 
-      // let data = {
-      //   service_id: import.meta.env.VITE_EMAILJS_SERVICE_ID,
-      //   template_id: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-      //   user_id: import.meta.env.VITE_EMAILJS_USER_ID,
-      //   accessToken: import.meta.env.VITE_EMAILJS_ACCESS_TOKEN,
-      //   template_params: {
-      //     name: user.nombre,
-      //     lastname: user.apellido,
-      //     date: formatedDate,
-      //     company: user.empresa,
-      //     email: user.email,
-      //     products: formatedProducts,
-      //     total: this.orderStore.$state.totalPrice
-      //   }
-      // }
-
-      let data = {
+      const pdf = await this.generatePdf(formatedDate, user)
+      
+      let template_params = {
         name: user.nombre,
         lastname: user.apellido,
         date: formatedDate,
         company: user.empresa,
         email: user.email,
         products: formatedProducts,
-        total: this.orderStore.$state.totalPrice
+        total: this.orderStore.$state.totalPrice,
+        content: pdf
       }
 
-      this.sendEmail(data)
-      // this.exportExcel(user)
+      this.sendEmail(template_params)
     },
-    exportExcel(user){
-      const framework = JSON.parse(JSON.stringify(this.orderStore.$state.products));
-      framework.push({name: '', art_code: '', price: '', quantity: ''})
-      framework.push({name: '', art_code: '', price: '', quantity: ''})
-      framework.push({name: 'TOTAL', art_code: '', price: this.orderStore.$state.totalPrice, quantity: ''})
+    async generatePdf(formatedDate, user) {
+      let tableRows = [['Cantidad', 'Descripción', 'Código', 'Precio']]
+      this.orderStore.$state.products.forEach((p) => {
+        let row = [p.quantity, p.name, p.art_code, p.price]
+        tableRows.push(row)
+      })
+      const docDefinition = {
+        pageMargins: [40, 60, 40, 60],
+        header: {
+          text: formatedDate,
+          style: 'header'
+        },
+        content: [
+          {
+            text: `Pedido de ${user.nombre} ${user.apellido}`,
+            style: 'body'
+          },
+          {
+            table: {
+              headerRows: 1,
+              widths: ['*', 'auto', 100, '*'],
+              body: tableRows,
+              style: 'table'
+            }
+          },
+          {
+            text: `Total: ${this.orderStore.$state.totalPrice}`,
+            style: 'total'
+          }
+        ],
+        footer: {
+          text: 'INSA Distribuidora',
+          style: 'footer'
+        },
+        styles: {
+          header: {
+            fontSize: 12,
+            italics: true,
+            alignment: 'right',
+            margin: [20, 20]
+          },
+          body: {
+            fontSize: 12,
+            margin: [0, 20]
+          },
+          footer: {
+            fontSize: 14,
+            alignment: 'right',
+            margin: [20, 0]
+          },
+          total: {
+            fontSize: 12,
+            alignment: 'right',
+            bold: true,
+            margin: [0, 20]
+          }
+        }
+      }
 
-      const XLSX = xlsx;
-      const workbook = XLSX.utils.book_new();
-      const worksheet = XLSX.utils.json_to_sheet(framework);
-      XLSX.utils.book_append_sheet(workbook, worksheet, "framework");
-      XLSX.writeFile(workbook, `pedido-${user.empresa}-${this.formatDate(this.orderStore.$state.fecha, 'es', {
-        dateStyle: 'short'
-      })}.xlsx`);
+      return new Promise((resolve, reject) => {
+        pdfmake.createPdf(docDefinition).getBase64(async (data) => {
+          try {
+            resolve(data)
+          } catch (error) {
+            reject(error)
+          }
+        })
+      })
     },
     toHome() {
       this.showModalInfo = false
