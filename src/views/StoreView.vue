@@ -57,7 +57,7 @@
           :code="item.ART_CODIG"
         />
       </div>
-    
+
       <pagination
         :options="{ template: MyPagination }"
         v-model="page"
@@ -172,18 +172,20 @@ onMounted(async () => {
 })
 
 const addImages = async (products) => {
-  const context = await import.meta.glob('../../public/img/products/*.jpg');
-  const imageNames = Object.keys(context).map(key => key.replace(/^..\/..\/public\/img\/products\/|\.jpg$/g, ''));
+  const context = await import.meta.glob('../../public/img/products/*.jpg')
+  const imageNames = Object.keys(context).map((key) =>
+    key.replace(/^..\/..\/public\/img\/products\/|\.jpg$/g, '')
+  )
 
   let newProducts = products.map((p) => {
-    let img = imageNames.find((i) => i === p.ART_CODIG);
-    if(img){
-      return {...p, img: `/img/products/${img}.jpg`}
-    }else{
-      return {...p, img: null}
+    let img = imageNames.find((i) => i === p.ART_CODIG)
+    if (img) {
+      return { ...p, img: `/img/products/${img}.jpg` }
+    } else {
+      return { ...p, img: null }
     }
   })
-  return newProducts 
+  return newProducts
 }
 
 function orderList(data) {
@@ -281,16 +283,20 @@ function setFilters() {
 
   if (filteredProducts.value.length > 0) {
     filteredProducts.value = filteredProducts.value.filter((i) => {
-      return i.ART_DESCR?.toLowerCase().includes(filters.value.search.toLowerCase())
+      return (
+        i.ART_DESCR?.toLowerCase().includes(filters.value.search.toLowerCase()) ||
+        i.ART_CODIG?.toLowerCase().includes(filters.value.search.toLowerCase())
+      )
     })
   } else {
     filteredProducts.value = productsList.value.filter((i) =>
-      i.ART_DESCR?.toLowerCase().includes(filters.value.search.toLowerCase())
+      i.ART_DESCR?.toLowerCase().includes(filters.value.search.toLowerCase()) ||
+      i.ART_CODIG?.toLowerCase().includes(filters.value.search.toLowerCase())
     )
   }
 
   setPage(1)
-  page.value = 1;
+  page.value = 1
 }
 
 function clearFilters() {
