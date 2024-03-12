@@ -46,10 +46,7 @@
 import { useOrderStore } from '@/stores/orderState'
 import { VueSpinner } from 'vue3-spinners'
 import axios from 'axios'
-
-import { Resend } from 'resend'
-
-const resend = new Resend('re_KkZLacUa_2AJoM4DfCP8yNXxUnRKHRp6J');
+import emailjs from '@emailjs/browser'
 
 export default {
   name: 'OrderModal',
@@ -100,38 +97,33 @@ export default {
     },
     async sendEmail(data) {
       this.showSpinner = true
-      try{
-        await resend.emails.send({
-          from: 'onboarding@resend.dev',
-          to: 'developmentbug@gmail.com',
-          subject: 'Hello MACA',
-          html: '<p>Congrats on sending your <strong>first email</strong>!</p>'
-        })
-      }catch(error){
-        console.log(error)
+      const service_id = import.meta.env.VITE_EMAILJS_SERVICE_ID
+      const template_id = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+
+      try {
+        await emailjs.send(service_id, template_id, { ...data, content: excel })
+
+        // const url = 'https://api.emailjs.com/api/v1.0/email/send'
+        // await axios.post(url, data, {
+        //   headers: {
+        //     'Content-Type': 'application/json'
+        //   }
+        // })
+        this.showSpinner = false
+        this.sendedEmail = true
+        this.modalTitle = 'El pedido ha sido enviado de manera exitosa!'
+        this.orderStore.reset()
+        this.showModalInfo = true
+      } catch (error) {
+        console.log({ error })
+        this.showSpinner = false
+        this.sendedEmail = false
+        this.modalTitle = 'Error inesperado!'
+        this.modalContent =
+          'El pedido no ha podido enviarse debido a un error inesperado, por favor vuelva a intentarlo!'
+        this.showModalInfo = true
+        this.showModalInfo = true
       }
-      // try {
-      //   const url = 'https://api.emailjs.com/api/v1.0/email/send'
-      //   await axios.post(url, data, {
-      //     headers: {
-      //       'Content-Type': 'application/json'
-      //     }
-      //   })
-      //   this.showSpinner = false
-      //   this.sendedEmail = true
-      //   this.modalTitle = 'El pedido ha sido enviado de manera exitosa!'
-      //   this.orderStore.reset()
-      //   this.showModalInfo = true
-      // } catch (error) {
-      //   console.log({ error })
-      //   this.showSpinner = false
-      //   this.sendedEmail = false
-      //   this.modalTitle = 'Error inesperado!'
-      //   this.modalContent =
-      //     'El pedido no ha podido enviarse debido a un error inesperado, por favor vuelva a intentarlo!'
-      //   this.showModalInfo = true
-      //   this.showModalInfo = true
-      // }
     },
     async confirmOrder() {
       this.showSpinner = true
@@ -144,20 +136,30 @@ export default {
       })
       const formatedProducts = this.formatProducts(this.orderStore.$state.products)
 
+      // let data = {
+      //   service_id: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+      //   template_id: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+      //   user_id: import.meta.env.VITE_EMAILJS_USER_ID,
+      //   accessToken: import.meta.env.VITE_EMAILJS_ACCESS_TOKEN,
+      //   template_params: {
+      //     name: user.nombre,
+      //     lastname: user.apellido,
+      //     date: formatedDate,
+      //     company: user.empresa,
+      //     email: user.email,
+      //     products: formatedProducts,
+      //     total: this.orderStore.$state.totalPrice
+      //   }
+      // }
+
       let data = {
-        service_id: import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        template_id: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-        user_id: import.meta.env.VITE_EMAILJS_USER_ID,
-        accessToken: import.meta.env.VITE_EMAILJS_ACCESS_TOKEN,
-        template_params: {
-          name: user.nombre,
-          lastname: user.apellido,
-          date: formatedDate,
-          company: user.empresa,
-          email: user.email,
-          products: formatedProducts,
-          total: this.orderStore.$state.totalPrice
-        }
+        name: user.nombre,
+        lastname: user.apellido,
+        date: formatedDate,
+        company: user.empresa,
+        email: user.email,
+        products: formatedProducts,
+        total: this.orderStore.$state.totalPrice
       }
 
       this.sendEmail(data)
