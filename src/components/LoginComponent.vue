@@ -251,6 +251,16 @@ export default {
           this.modalTitle = 'Registro exitoso!'
           this.modalInfo = `Gracias por elegirnos ${this.nombre.charAt(0).toUpperCase() + this.nombre.slice(1)}! Ya puede realizar su pedido.`
           this.showInfoModal = true
+
+          // login
+          const data = {
+              nombre: this.nombre,
+              apellido: this.apellido,
+              empresa: this.empresa,
+              email: this.email
+            }
+            this.userStore.setUser(data)
+            localStorage.setItem('userLogged', JSON.stringify(data))
         } catch (error) {
           this.showSpinner = false
           console.log(error)
