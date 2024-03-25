@@ -113,7 +113,7 @@ footer {
   border-radius: 16px 16px 0 0;
   max-height: 100%;
   width: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
 }
 .img-container.default-img {
