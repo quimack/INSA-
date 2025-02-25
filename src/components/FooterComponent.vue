@@ -64,7 +64,7 @@
 
     <div class="footer-bottom">
       <div class="container">
-        <p class="copyright">&copy; 2024 <a href="#">bug</a>. All Rights Reserved</p>
+        <p class="copyright">&copy; 2024 <a href="http://www.globalmkt.com.ar">globalmkt.com.ar</a>. All Rights Reserved</p>
       </div>
     </div>
   </footer>
