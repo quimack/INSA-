@@ -200,6 +200,11 @@ export default {
   mounted() {
     // Agregar un manejador de eventos para cerrar el carrito cuando se hace clic fuera de él
     document.addEventListener('click', this.handleClickOutsideCart)
+    const savedCart = localStorage.getItem('cart')
+    if (savedCart) {
+      this.orderStore.products = JSON.parse(savedCart)
+      console.log('Carrito cargado desde storage:', this.orderStore.products)
+    }
   },
   unmounted() {
     // Eliminar el manejador de eventos cuando el componente se destruye para evitar fugas de memoria
@@ -231,16 +236,25 @@ export default {
     },
     subtractProduct(product) {
       this.orderStore.subtractProduct(product.art_code)
+      localStorage.setItem('cart', JSON.stringify(this.orderStore.products))
+      console.log('Producto restado:', product)
+      console.log('Carrito actualizado en storage:', JSON.parse(localStorage.getItem('cart')))
     },
     addProduct(product) {
       this.orderStore.addProduct({
         name: product.name,
-        code: product.art_code,
+        art_code: product.art_code,
         price: product.price
       })
+      localStorage.setItem('cart', JSON.stringify(this.orderStore.products))
+      console.log('Producto agregado:', product)
+      console.log('Carrito actualizado en storage:', JSON.parse(localStorage.getItem('cart')))
     },
     deleteProduct(product) {
       this.orderStore.deleteProduct(product.art_code)
+      localStorage.setItem('cart', JSON.stringify(this.orderStore.products))
+      console.log('Producto eliminado:', product)
+      console.log('Carrito actualizado en storage:', JSON.parse(localStorage.getItem('cart')))
     },
     logOut() {
       localStorage.removeItem('userLogged')
