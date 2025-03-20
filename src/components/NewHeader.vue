@@ -104,6 +104,21 @@
             <ion-icon name="cart-outline"></ion-icon>
 
             <span>Tienda</span>
+            <span v-if="orderStore.products.length > 0" class="cart-count">
+              {{ orderStore.products.reduce((total, product) => total + product.quantity, 0) }}
+            </span>
+            <span v-if="orderStore.products.length > 0" class="cart-indicator"></span>
+          </button>
+
+          <button
+            v-if="isStorePage && userStore.isUserLogged()"
+            class="header-bottom-actions-btn"
+            aria-label="Download"
+            @click="downloadPDF"
+            title="Descarga ofertas"
+          >
+            <ion-icon name="download-outline"></ion-icon>
+            <span>Descargar</span>
           </button>
 
           <!-- Contenido del carrito -->
@@ -170,6 +185,7 @@ import { RouterLink } from 'vue-router'
 import { useUserStore } from '@/stores/userState'
 import { useOrderStore } from '@/stores/orderState'
 import { mapState } from 'pinia'
+import pdf from '../assets/ofertas.pdf'
 
 export default {
   name: 'NewHeader',
@@ -262,6 +278,15 @@ export default {
       this.orderStore.reset()
       this.isLoggedIn = false
       this.$router.push('/')
+    },
+    downloadPDF() {
+      const link = document.createElement('a')
+      link.href = pdf 
+      link.download = 'ofertas.pdf' 
+      link.target = '_blank' 
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
     }
   }
 }
@@ -543,6 +568,20 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.cart-button {
+  position: relative;
+}
+
+.cart-indicator {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
 }
 
 @media (max-width: 600px) {
