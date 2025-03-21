@@ -111,7 +111,7 @@
           </button>
 
           <button
-            v-if="isStorePage && userStore.isUserLogged()"
+            v-if="isStorePage"
             class="header-bottom-actions-btn"
             aria-label="Download"
             @click="downloadPDF"
