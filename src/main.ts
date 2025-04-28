@@ -6,9 +6,12 @@ import { IonIcon } from '@ionic/vue'
 import { vfmPlugin } from 'vue-final-modal'
 import './assets/main.css'
 import { createPinia } from 'pinia'
+import 'ionicons'
 
 const app = createApp(App)
 const pinia = createPinia()
+
+
 
 app.use(router)
 app.use(pinia)
